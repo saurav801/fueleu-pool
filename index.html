@@ -1,0 +1,2819 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FuelEU – WtW Compliance Pool (PRO v8)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ttline-teal-blue:#0079a7;
+      --ttline-orange-peel:#ff9c00;
+      --ttline-amber:#ffc947;
+      --ink:#0f172a;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --bg1:#e0f2fe;
+      --bg2:#f9fafb;
+      --bg3:#f3f4f6;
+      --radius:14px;
+      --pill:999px;
+      --base-font:0.98rem;
+      --table-font:0.72rem;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      padding:24px;
+      font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size:var(--base-font);
+      line-height:1.6;
+      color:var(--ink);
+      background: radial-gradient(circle at 0% 0%, var(--bg1) 0, var(--bg2) 45%, var(--bg3) 100%);
+      overflow-wrap: break-word;
+    }
+    .container{ max-width: 1400px; margin: 0 auto; }
+
+    .header{
+      display:flex; flex-wrap:wrap; gap:14px;
+      align-items:center; justify-content:space-between;
+      margin-bottom: 12px;
+    }
+    .brand{ display:flex; gap:14px; align-items:center; min-width:280px; }
+    .brand-logo{
+      height: 46px; width:auto; object-fit:contain;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 10px 22px rgba(15,23,42,0.08);
+      padding: 6px 8px;
+    }
+    h1{ margin:0; font-size: 1.75rem; letter-spacing: 0.02em; color: var(--ttline-teal-blue); line-height: 1.15; }
+    .subtitle{ font-size: 0.88rem; color: var(--muted); }
+
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:flex-end; }
+    .pill{
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+      padding: 8px 12px;
+      border-radius: var(--pill);
+      background: rgba(255,255,255,0.95);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 22px rgba(15,23,42,0.08);
+    }
+    .chip{
+      display:inline-flex; align-items:center;
+      padding:2px 10px; border-radius: var(--pill);
+      font-size: 0.75rem; font-weight: 800;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      background: #e5e7eb; color:#111827;
+    }
+    .chip.ok{ background: rgba(0,121,167,0.08); color: var(--ttline-teal-blue); border-color: rgba(0,121,167,0.35); }
+    .chip.warn{ background: rgba(255,156,0,0.10); color:#b45309; border-color: rgba(255,156,0,0.55); }
+    .chip.bad{ background: rgba(185,28,28,0.08); color:#b91c1c; border-color: rgba(185,28,28,0.35); }
+    .mini{ font-size:0.8rem; color: var(--muted); }
+    .mono{ font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; }
+
+    .btn{
+      padding: 8px 14px;
+      border-radius: var(--pill);
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 900;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(90deg, var(--ttline-teal-blue), #0ea5e9);
+      box-shadow: 0 6px 14px rgba(15,23,42,0.18);
+      transition: transform .08s ease, filter .12s ease;
+    }
+    .btn:hover{ filter: brightness(1.03); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+    .btn.secondary{ background:#e5e7eb; color:#111827; box-shadow:none; border: 1px solid #d1d5db; }
+    .btn.danger{ background:#fee2e2; color:#991b1b; box-shadow:none; border:1px solid rgba(185,28,28,0.25); }
+    .btn:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+
+    .tip{
+      display:inline-flex; align-items:center; justify-content:center;
+      width: 18px; height: 18px; border-radius: 999px;
+      margin-left: 8px; font-size: 0.72rem; font-weight: 900;
+      cursor: help; color: var(--ttline-teal-blue);
+      background: rgba(0,121,167,0.10);
+      border: 1px solid rgba(0,121,167,0.25);
+      position: relative;
+      flex: 0 0 auto;
+    }
+    .tip::after{
+      content: attr(data-tip);
+      position:absolute; left: 50%; top: 115%;
+      transform: translateX(-50%);
+      width: min(420px, 78vw);
+      padding: 10px 11px;
+      border-radius: 12px;
+      background: rgba(15,23,42,0.96);
+      color: #fff;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      box-shadow: 0 14px 35px rgba(15,23,42,0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .12s ease, transform .12s ease;
+      z-index: 80;
+      white-space: normal;
+    }
+    .tip::before{
+      content:"";
+      position:absolute; left:50%; top: 107%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-bottom-color: rgba(15,23,42,0.96);
+      opacity:0;
+      transition: opacity .12s ease;
+      z-index: 81;
+    }
+    .tip:hover::after{ opacity:1; transform: translateX(-50%) translateY(2px); }
+    .tip:hover::before{ opacity:1; }
+
+    .tabs{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin: 10px 0 16px 0; }
+    .tab{
+      padding: 9px 14px;
+      border-radius: var(--pill);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.95);
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 900;
+      color: #111827;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.06);
+      transition: background .12s ease, border-color .12s ease, transform .08s ease;
+    }
+    .tab:hover{ transform: translateY(-1px); border-color: rgba(0,121,167,0.35); }
+    .tab.active{
+      background: #e0f2fe;
+      border-color: var(--ttline-teal-blue);
+      color: var(--ttline-teal-blue);
+      box-shadow: 0 0 0 1px rgba(0,121,167,0.22) inset, 0 8px 18px rgba(15,23,42,0.06);
+    }
+
+    .page{ display:none; }
+    .page.active{ display:block; }
+    .card{
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.98);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 26px rgba(15,23,42,0.08);
+      margin-bottom: 14px;
+    }
+    .cardhead{ display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items: baseline; margin-bottom: 8px; }
+    .ctitle{ font-size: 1.12rem; font-weight: 900; color: var(--ttline-teal-blue); }
+    .csub{ font-size: 0.92rem; color: var(--muted); margin-top: 2px; }
+    .actions{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:flex-end; }
+
+    .grid{ display:flex; flex-wrap:wrap; gap: 12px; align-items:flex-end; }
+    .field{ min-width: 240px; flex: 1; }
+    .field.small{ min-width: 170px; flex: 0.7; }
+    .field.tiny{ min-width: 130px; flex: 0.45; }
+    .field.wide{ min-width: 380px; flex: 1.4; }
+
+    .labelrow{ display:flex; align-items:center; gap: 8px; }
+    label{ display:block; margin-bottom: 4px; font-size: 0.78rem; font-weight: 900; color: var(--ttline-teal-blue); }
+    input, select{ width: 100%; padding: 8px 10px; border-radius: var(--pill); border: 1px solid #d1d5db; background: #fff; font-size: 0.84rem; outline:none; }
+    input:focus, select:focus{ border-color: rgba(0,121,167,0.65); box-shadow: 0 0 0 3px rgba(0,121,167,0.12); }
+
+    .hint{
+      margin-top: 10px;
+      border-radius: 12px;
+      border: 1px dashed rgba(0,121,167,0.28);
+      background: rgba(224,242,254,0.55);
+      padding: 10px 12px;
+      font-size: 0.84rem;
+      color: #334155;
+    }
+
+    .kpis{ margin-top: 10px; display:grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 900px){ .kpis{ grid-template-columns: repeat(4, 1fr); } }
+    .kpi{ border-radius: 14px; border: 1px solid var(--border); background: #f9fafb; padding: 12px 12px; min-height: 74px; }
+    .klabel{ font-size: 0.78rem; color: var(--muted); font-weight: 900; display:flex; align-items:center; gap: 6px; }
+    .kval{ margin-top: 6px; font-size: 1.08rem; font-weight: 900; color:#111827; }
+
+    .tablewrap{ margin-top: 10px; overflow-x:auto; border-radius: 14px; border: 1px solid var(--border); background: #fff; box-shadow: 0 2px 10px rgba(15,23,42,0.04); }
+    table{ width:100%; border-collapse: collapse; font-size: var(--table-font); min-width: 1100px; }
+    th, td{ border-bottom: 1px solid var(--border); padding: 7px 8px; text-align: center; white-space: nowrap; }
+    th{ background: #f3f4f6; font-weight: 900; color:#111827; position: sticky; top: 0; z-index: 1; border-bottom: 1px solid #d1d5db; }
+    tbody tr:nth-child(even) td{ background: #fafafa; }
+    td.left, th.left{ text-align:left; }
+    td.right, th.right{ text-align:right; }
+    .cell-input{ width: 100%; padding: 6px 9px; border-radius: var(--pill); border: 1px solid #d1d5db; font-size: 0.78rem; background: #fff; }
+    .cell-input.right{ text-align:right; }
+
+    .warnbox{
+      margin-top: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,156,0,0.55);
+      background: #fff7ed;
+      color:#92400e;
+      padding: 10px 12px;
+      font-size: 0.84rem;
+      display:none;
+    }
+
+    .companyGrid{ margin-top: 10px; display:grid; grid-template-columns: 56px 1fr; gap: 14px; align-items:start; }
+    .avatar{
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+    }
+    .avatar img{ width:100%; height:100%; object-fit:contain; background:#fff; padding: 6px; }
+    .avatar .init{ font-weight: 900; color: var(--ttline-teal-blue); font-size: 1.05rem; letter-spacing: 0.04em; }
+
+    .logo-icon{
+      width: 18px; height: 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.08);
+      background:#fff;
+      object-fit: contain;
+      vertical-align: -3px;
+      margin-right: 8px;
+      box-shadow: 0 4px 10px rgba(15,23,42,0.06);
+      padding: 2px;
+    }
+
+    .attach-box{ margin-top: 10px; border: 1px solid var(--border); background: rgba(255,255,255,0.98); border-radius: 14px; box-shadow: 0 2px 10px rgba(15,23,42,0.04); overflow: hidden; }
+    .attach-box > summary{
+      list-style: none; cursor: pointer;
+      display:flex; align-items:center; justify-content: space-between;
+      gap: 10px; padding: 10px 12px;
+      font-weight: 900; color: #111827;
+      background: #f9fafb; border-bottom: 1px solid var(--border);
+      user-select: none;
+    }
+    .attach-box > summary::-webkit-details-marker{ display:none; }
+    .attach-box > summary .leftwrap{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .attach-box > summary .clip{
+      width: 26px; height: 26px; border-radius: 10px;
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(0,121,167,0.10); color: var(--ttline-teal-blue);
+      border: 1px solid rgba(0,121,167,0.22); flex: 0 0 auto;
+    }
+    .attach-box > summary .title{ font-size: 0.9rem; font-weight: 900; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .attach-box > summary .count{
+      display:inline-flex; align-items:center;
+      padding: 2px 10px; border-radius: 999px;
+      background: #e5e7eb; color:#111827;
+      font-size: 0.78rem; font-weight: 900;
+      border: 1px solid rgba(0,0,0,0.08); flex: 0 0 auto;
+    }
+    .docList{ display:grid; gap: 0; }
+    .docItem{
+      display:flex; justify-content:space-between; align-items:center;
+      gap: 12px; padding: 8px 10px;
+      font-size: 0.84rem;
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+    .docName{ overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 720px; }
+
+    tr.partRow{ cursor:pointer; }
+    tr.partRow:hover td{ background: rgba(224,242,254,0.65) !important; }
+    tr.partRow.active td{ background: rgba(224,242,254,0.92) !important; box-shadow: 0 0 0 1px rgba(0,121,167,0.18) inset; }
+    .caret{ display:inline-flex; width:18px; justify-content:center; margin-right:6px; color:#475569; }
+    .expandBox{ background: #f9fafb; border: 1px solid var(--border); border-radius: 14px; padding: 12px 12px; box-shadow: 0 2px 10px rgba(15,23,42,0.04); }
+    .expandGrid{ display:grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 980px){ .expandGrid{ grid-template-columns: 1fr 1fr; } }
+
+    /* Flag emoji + cell flex */
+    .flag-emoji{
+      display:inline-flex; align-items:center; justify-content:center;
+      width: 30px; height: 28px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.95);
+      box-shadow: 0 4px 10px rgba(15,23,42,0.06);
+      font-size: 1rem;
+      flex: 0 0 auto;
+    }
+    .cell-flex{ display:flex; align-items:center; gap:8px; }
+    .import-grid{ display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; margin-top:10px; }
+    .import-result{
+      margin-top:10px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,121,167,0.35);
+      background: rgba(224,242,254,0.45);
+      padding: 10px 12px;
+      font-size: 0.84rem;
+      color:#0f172a;
+      display:none;
+    }
+
+    .modalBack{ position: fixed; inset: 0; background: rgba(15,23,42,0.45); display:none; align-items:center; justify-content:center; z-index: 50; padding: 16px; }
+    .modalBack.show{ display:flex; }
+    .modal{ width: min(880px, 100%); max-height: calc(100vh - 40px); overflow:auto; background:#fff; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 20px 45px rgba(15,23,42,0.35); padding: 14px 16px; }
+    .mhead{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; }
+    .mtitle{ font-weight: 900; color: var(--ttline-teal-blue); }
+    .x{ border:none; background:transparent; cursor:pointer; font-size:1.35rem; line-height:1; padding: 4px 8px; border-radius: 10px; }
+    .x:hover{ background:#f3f4f6; }
+
+    @media print {
+      @page { size: A3 landscape; margin: 8mm; }
+      *{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body{ background:#fff; padding:0; }
+      .tabs, .toolbar, .hint, .modalBack, .btn, input, select, summary{ display:none !important; }
+      .card{ box-shadow:none; border: none; padding: 0; margin: 0 0 10px 0; }
+      .tablewrap{ box-shadow:none; border: 1px solid #d1d5db; }
+      th, td{ padding: 4px 6px; }
+      table{ font-size: 0.68rem; min-width: 100% !important; }
+      .page{ display:none; }
+      body[data-print="current"] .page.active{ display:block; }
+      body[data-print="all"] .page{ display:block; }
+      .tip{ display:none !important; }
+    }
+
+    @media (max-width: 980px) {
+      body{ padding: 16px; }
+      .companyGrid{ grid-template-columns: 1fr; }
+      .docName{ max-width: 260px; }
+    }
+  </style>
+</head>
+
+<body data-print="current">
+  <div class="container">
+
+    <div class="header">
+      <div class="brand">
+        <img class="brand-logo" id="brandLogo" src="tt_line_logo.png" alt="TT-Line logo" onerror="this.style.display='none';" />
+        <div>
+          <h1>FuelEU – WtW Compliance Pool</h1>
+          <div class="subtitle"> Version created 2026 </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="pill">
+          <span class="chip ok">Auto‑Save</span>
+          <span class="mini" id="saveStatus">–</span>
+          <span class="mini" id="saveFail" style="display:none; color:#991b1b; font-weight:900;">Save failed (quota?)</span>
+          <span class="chip" id="activeCustomerChip">Customer: –</span>
+        </div>
+
+        <div class="pill">
+          <button class="btn secondary" id="btnPdfCurrent" title="Print dialog → Save as PDF">Export PDF (current)</button>
+          <button class="btn secondary" id="btnPdfAll" title="Print dialog → Save as PDF">Export PDF (full report)</button>
+          <button class="btn secondary" id="btnExport">Export JSON</button>
+          <button class="btn secondary" id="btnImport">Import JSON</button>
+          <button class="btn danger" id="btnReset">Reset saved</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab" data-page="overview">Overview</button>
+      <button class="tab" data-page="owner">Pool Owner</button>
+      <button class="tab" data-page="customers">Customers</button>
+      <button class="tab" data-page="shipcalc">Ship Calc</button>
+      <button class="tab" data-page="consumption">Consumption</button>
+      <button class="tab" data-page="fuels">Fuel Library</button>
+    </div>
+
+    <!-- PAGE: OVERVIEW -->
+    <div class="page" id="page-overview">
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Pool Overview</div>
+            <div class="csub">Owner is separate from customers. Click row to expand, double‑click to open details.</div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field wide">
+            <label class="labelrow">
+              Compliance Balance source for pooling
+              <span class="tip" data-tip="Which CB value is used for pooling. 'Indicated first' uses the verifier-reported compliance balance when present; otherwise it falls back to the calculated CB.">i</span>
+            </label>
+            <select id="cbSource">
+              <option value="indicated_first">Indicated CB (if present) else Calculated CB</option>
+              <option value="calculated_only">Calculated CB only</option>
+              <option value="indicated_only">Indicated CB only</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="labelrow">
+              Global allocation (Owner → Customers)
+              <span class="tip" data-tip="How the pool owner's surplus is distributed to customer deficits. Proportional allocates by deficit size; Sequential fills the largest deficits first.">i</span>
+            </label>
+            <select id="globalAlloc">
+              <option value="proportional">Proportional to deficit</option>
+              <option value="sequential">Sequential (largest deficit first)</option>
+            </select>
+          </div>
+          <div class="field small">
+            <label class="labelrow">
+              Global transfer cap [tCO₂e]
+              <span class="tip" data-tip="Optional cap for the total amount transferred from the pool owner to customers. Leave empty for no cap.">i</span>
+            </label>
+            <input id="globalCap" type="number" step="0.001" placeholder="optional" />
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="klabel">Owner surplus <span class="tip" data-tip="Sum of positive compliance balances across the pool owner's fleet (in tCO2e).">i</span></div>
+            <div class="kval mono" id="kOwnerSurp">–</div>
+          </div>
+          <div class="kpi">
+            <div class="klabel">Customer deficits (sum) <span class="tip" data-tip="Sum of absolute deficits across all customer companies (in tCO2e).">i</span></div>
+            <div class="kval mono" id="kCustDef">–</div>
+          </div>
+          <div class="kpi">
+            <div class="klabel">Transferable <span class="tip" data-tip="Transferable = min(owner surplus, customer deficit sum, transfer cap).">i</span></div>
+            <div class="kval mono" id="kTransferable">–</div>
+          </div>
+          <div class="kpi">
+            <div class="klabel">Rest calculation <span class="tip" data-tip="Remaining deficit after pooling. If there is no deficit, remaining surplus is shown.">i</span></div>
+            <div class="kval mono" id="kRest">–</div>
+          </div>
+        </div>
+
+        <div class="tablewrap">
+          <table id="tblOverview">
+            <thead>
+              <tr>
+                <th class="left" style="min-width:380px;">Participant</th>
+                <th class="right" style="min-width:90px;">Vessels</th>
+                <th class="right" style="min-width:170px;">CB total [tCO₂e] <span class="tip" data-tip="Sum of vessel compliance balances. Positive = surplus; negative = deficit.">i</span></th>
+                <th class="right" style="min-width:170px;">Global transfer <span class="tip" data-tip="Transfer from pool owner to participant. Positive = received; negative = given.">i</span></th>
+                <th class="right" style="min-width:170px;">Pooled CB <span class="tip" data-tip="CB after global pooling transfers.">i</span></th>
+                <th class="left" style="min-width:160px;">Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="warnbox" id="warnOverview"></div>
+      </div>
+
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Fleet Import (Excel/CSV)</div>
+            <div class="csub">Upload template-based fleet data for owner and customers.</div>
+          </div>
+        </div>
+
+        <div class="import-grid">
+          <div class="field wide">
+            <label class="labelrow">
+              Upload file (.xlsx or .csv)
+              <span class="tip" data-tip="Use the provided Excel template. OwnerFleet + CustomerFleet sheets are supported. CSV is also supported (template columns).">i</span>
+            </label>
+            <input id="fleetUpload" type="file" accept=".xlsx,.xls,.csv" />
+          </div>
+          <div class="field small">
+            <label class="labelrow">
+              Import mode
+              <span class="tip" data-tip="Append adds vessels to existing fleets. Replace clears fleets impacted by the uploaded file first.">i</span>
+            </label>
+            <select id="importMode">
+              <option value="append">Append</option>
+              <option value="replace">Replace</option>
+            </select>
+          </div>
+          <div class="field small">
+            <label class="labelrow">
+              Actions
+              <span class="tip" data-tip="Download the Excel upload template or import the selected file.">i</span>
+            </label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn secondary" id="btnDownloadTemplate">Download Template (xlsx)</button>
+              <button class="btn" id="btnImportFleet">Import Fleet</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="import-result" id="importResult"></div>
+        <div class="mini" style="margin-top:8px;">
+          Tip: Excel import uses SheetJS (loaded from CDN). If blocked, export template as CSV and upload CSV.
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: OWNER -->
+    <div class="page" id="page-owner">
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Pool Owner (Provider)</div>
+            <div class="csub">Owner profile + owner fleet (separate from customer companies)</div>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" id="btnOwnerClearFleet">Clear fleet</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label class="labelrow">Pool owner name <span class="tip" data-tip="Name of the pool provider / pool lead entity.">i</span></label>
+            <input id="ownerName" />
+          </div>
+          <div class="field small">
+            <label class="labelrow">Embed files <span class="tip" data-tip="Meta-only stores filenames only. Embed stores full files as Base64 (persistent, larger).">i</span></label>
+            <select id="embedModeOwner">
+              <option value="meta">Meta-only (recommended)</option>
+              <option value="embed">Embed Base64 (persistent, larger)</option>
+            </select>
+          </div>
+          <div class="field small">
+            <label class="labelrow">Internal pooling mode (fleet) <span class="tip" data-tip="Vessel-level redistribution inside the owner's fleet (surplus → deficit).">i</span></label>
+            <select id="ownerPoolMode">
+              <option value="proportional">Proportional to deficit</option>
+              <option value="sequential">Sequential (largest deficit first)</option>
+            </select>
+          </div>
+          <div class="field tiny">
+            <label class="labelrow">Owner cap [tCO₂e] <span class="tip" data-tip="Optional cap for internal pooling transfers within the owner's fleet.">i</span></label>
+            <input id="ownerCap" type="number" step="0.001" placeholder="optional" />
+          </div>
+        </div>
+
+        <div class="companyGrid">
+          <div class="avatar" id="ownerAvatar"></div>
+          <div>
+            <div class="grid">
+              <div class="field">
+                <label class="labelrow">Owner logo (icon) <span class="tip" data-tip="Logo is displayed as a small icon only (overview + avatar).">i</span></label>
+                <input id="ownerLogo" type="file" accept="image/*" />
+                <div class="mini">For persistence after closing: set Embed files = “embed”.</div>
+              </div>
+              <div class="field">
+                <label class="labelrow">Owner documents <span class="tip" data-tip="Attach supporting docs. UI shows filenames only.">i</span></label>
+                <input id="ownerDocs" type="file" multiple />
+              </div>
+              <div class="field tiny">
+                <label>&nbsp;</label>
+                <button class="btn secondary" id="btnOwnerClearAssets" style="width:100%;">Clear assets</button>
+              </div>
+            </div>
+
+            <details class="attach-box" open>
+              <summary>
+                <span class="leftwrap"><span class="clip" aria-hidden="true">📎</span><span class="title">Owner documents</span></span>
+                <span class="count" id="ownerDocCount">0</span>
+              </summary>
+              <div class="docList" id="ownerDocList"></div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Owner Fleet</div>
+            <div class="csub">Includes ship class and flag icons (emoji)</div>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" id="btnOwnerAddVessel">+ Add vessel</button>
+            <button class="btn" id="btnOwnerAddFromCalc">Add from Ship Calc</button>
+          </div>
+        </div>
+
+        <div class="tablewrap">
+          <table id="tblOwnerFleet" style="min-width:1900px;">
+            <thead>
+              <tr>
+                <th class="left" style="min-width:220px;">Vessel name</th>
+                <th class="right" style="min-width:120px;">IMO</th>
+                <th class="left" style="min-width:190px;">Flag</th>
+                <th class="left" style="min-width:210px;">Verifier</th>
+                <th class="left" style="min-width:160px;">Ship class</th>
+                <th class="right" style="min-width:160px;">Energy [MJ]</th>
+                <th class="right" style="min-width:160px;">GHGIE_actual</th>
+                <th class="right" style="min-width:160px;">Calc CB [tCO₂e]</th>
+                <th class="right" style="min-width:180px;">Indicated CB [tCO₂e]</th>
+                <th class="right" style="min-width:140px;">Transfer</th>
+                <th class="right" style="min-width:160px;">Pooled CB</th>
+                <th class="left" style="min-width:150px;">Status</th>
+                <th style="min-width:260px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="warnbox" id="warnOwnerFleet"></div>
+      </div>
+    </div>
+
+       <div class="page" id="page-customers">
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Customers</div>
+            <div class="csub">Customer companies participating in the pool (separate from the owner)</div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="btnCustomerCreate">Create / Select</button>
+            <button class="btn secondary" id="btnCustomerClearFleet">Clear fleet</button>
+            <button class="btn danger" id="btnCustomerDelete">Delete</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label class="labelrow">Active customer</label>
+            <select id="customerSelect"></select>
+          </div>
+          <div class="field">
+            <label class="labelrow">New customer name</label>
+            <input id="customerNew" placeholder="e.g., Customer A Logistics" />
+          </div>
+          <div class="field small">
+            <label class="labelrow">Embed files</label>
+            <select id="embedModeCustomer">
+              <option value="meta">Meta-only (recommended)</option>
+              <option value="embed">Embed Base64 (persistent, larger)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="companyGrid">
+          <div class="avatar" id="customerAvatar"></div>
+          <div>
+            <div class="grid">
+              <div class="field">
+                <label class="labelrow">Customer logo (icon)</label>
+                <input id="customerLogo" type="file" accept="image/*" />
+              </div>
+              <div class="field">
+                <label class="labelrow">Customer documents</label>
+                <input id="customerDocs" type="file" multiple />
+              </div>
+              <div class="field tiny">
+                <label>&nbsp;</label>
+                <button class="btn secondary" id="btnCustomerClearAssets" style="width:100%;">Clear assets</button>
+              </div>
+            </div>
+
+            <details class="attach-box" open>
+              <summary>
+                <span class="leftwrap"><span class="clip" aria-hidden="true">📎</span><span class="title">Customer documents</span></span>
+                <span class="count" id="customerDocCount">0</span>
+              </summary>
+              <div class="docList" id="customerDocList"></div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Customer Fleet (Active Customer)</div>
+            <div class="csub">Includes ship class and flag icons (emoji)</div>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" id="btnCustomerAddVessel">+ Add vessel</button>
+            <button class="btn" id="btnCustomerAddFromCalc">Add from Ship Calc</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label class="labelrow">Internal pooling mode (customer fleet)</label>
+            <select id="customerPoolMode">
+              <option value="proportional">Proportional to deficit</option>
+              <option value="sequential">Sequential (largest deficit first)</option>
+            </select>
+          </div>
+          <div class="field small">
+            <label class="labelrow">Customer cap [tCO₂e]</label>
+            <input id="customerCap" type="number" step="0.001" placeholder="optional" />
+          </div>
+          <div class="field">
+            <label class="labelrow">Customer summary</label>
+            <div class="mono" id="customerSummary" style="padding:8px 10px; border-radius:999px; border:1px solid #d1d5db; background:#fff;">–</div>
+          </div>
+        </div>
+
+        <div class="tablewrap">
+          <table id="tblCustomerFleet" style="min-width:1900px;">
+            <thead>
+              <tr>
+                <th class="left" style="min-width:220px;">Vessel name</th>
+                <th class="right" style="min-width:120px;">IMO</th>
+                <th class="left" style="min-width:190px;">Flag</th>
+                <th class="left" style="min-width:210px;">Verifier</th>
+                <th class="left" style="min-width:160px;">Ship class</th>
+                <th class="right" style="min-width:160px;">Energy [MJ]</th>
+                <th class="right" style="min-width:160px;">GHGIE_actual</th>
+                <th class="right" style="min-width:160px;">Calc CB [tCO₂e]</th>
+                <th class="right" style="min-width:180px;">Indicated CB [tCO₂e]</th>
+                <th class="right" style="min-width:140px;">Transfer</th>
+                <th class="right" style="min-width:160px;">Pooled CB</th>
+                <th class="left" style="min-width:150px;">Status</th>
+                <th style="min-width:260px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="warnbox" id="warnCustomerFleet"></div>
+      </div>
+    </div>
+
+    <!-- PAGE: SHIP CALC -->
+    <div class="page" id="page-shipcalc">
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Ship Calculator (FuelEU)</div>
+            <div class="csub">Consumption → GHGIE_actual → Calculated Compliance Balance (CB)</div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="btnShipCalcAdd">Add result</button>
+            <button class="btn secondary" id="btnClearCons">Clear Consumption</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label class="labelrow">Vessel name</label>
+            <input id="calcVesselName" placeholder="e.g., Peter Pan" />
+          </div>
+          <div class="field small">
+            <label class="labelrow">Reporting year</label>
+            <select id="year"></select>
+          </div>
+          <div class="field small">
+            <label class="labelrow">Reference value (2020) [gCO₂e/MJ]</label>
+            <input id="refVal" type="number" step="0.0001" value="91.16" />
+          </div>
+          <div class="field tiny">
+            <label class="labelrow">f_wind</label>
+            <input id="fWind" type="number" step="0.001" value="1" />
+          </div>
+          <div class="field">
+            <label class="labelrow">Notes</label>
+            <input id="calcNotes" placeholder="e.g., Jan 2026 / EU scope" />
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:10px;">
+          <div class="field small">
+            <label class="labelrow">Add result to</label>
+            <select id="calcAddTarget">
+              <option value="owner">Pool Owner fleet</option>
+              <option value="customer">Customer fleet</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="labelrow">Customer target</label>
+            <select id="calcCustomerTarget"></select>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="klabel">GHGIE_target</div><div class="kval mono" id="kTarget">–</div></div>
+          <div class="kpi"><div class="klabel">GHGIE_actual</div><div class="kval mono" id="kActual">–</div></div>
+          <div class="kpi"><div class="klabel">Calculated CB</div><div class="kval mono" id="kCB">–</div></div>
+          <div class="kpi"><div class="klabel">Penalty estimate (rough)</div><div class="kval mono" id="kPenalty">–</div></div>
+        </div>
+
+        <div class="warnbox" id="warnCalc"></div>
+
+        <div class="hint">
+          <b>Formula</b> — GHGIE_actual = f_wind × (Σ(E×WtW) / Σ(E×RWD)). &nbsp; CB = (target − actual) × Σ(E) / 1e6.
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: CONSUMPTION -->
+    <div class="page" id="page-consumption">
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Consumption</div>
+            <div class="csub">Fuel rows · scope · energy/emissions (updates in-place)</div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="btnAddRow">+ Add Row</button>
+            <button class="btn secondary" id="btnExportCSV">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="hint">Units: <b>t/kg</b> → MJ via LCV; <b>kWh</b> → MJ via 3.6; <b>MJ</b> directly. Scope multiplies energy.</div>
+
+        <div class="tablewrap">
+          <table id="tblCons" style="min-width:1200px;">
+            <thead>
+              <tr>
+                <th class="left" style="min-width:320px;">Fuel</th>
+                <th class="right" style="min-width:160px;">Amount</th>
+                <th style="min-width:90px;">Unit</th>
+                <th class="right" style="min-width:120px;">Scope</th>
+                <th class="right" style="min-width:160px;">Energy [MJ]</th>
+                <th class="right" style="min-width:180px;">Emissions [tCO₂e]</th>
+                <th class="left" style="min-width:260px;">Flags</th>
+                <th style="min-width:110px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="right"><b>Totals</b></td>
+                <td class="right mono" id="totE">–</td>
+                <td class="right mono" id="totT">–</td>
+                <td colspan="2"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: FUELS -->
+    <div class="page" id="page-fuels">
+      <div class="card">
+        <div class="cardhead">
+          <div>
+            <div class="ctitle">Fuel Library</div>
+            <div class="csub">LCV + WtW + RWD (Bio‑LNG separate)</div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="btnAddFuel">+ Add Fuel</button>
+            <button class="btn secondary" id="btnResetFuels">Reset Defaults</button>
+          </div>
+        </div>
+
+        <div class="tablewrap">
+          <table id="tblFuels" style="min-width:1080px;">
+            <thead>
+              <tr>
+                <th class="left" style="min-width:320px;">Fuel</th>
+                <th class="right" style="min-width:140px;">LCV [MJ/kg]</th>
+                <th class="right" style="min-width:170px;">WtW [gCO₂e/MJ]</th>
+                <th class="right" style="min-width:90px;">RWD</th>
+                <th style="min-width:90px;">Unit</th>
+                <th style="min-width:110px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="hint">For <b>Bio‑LNG</b>/biofuels/RFNBO: enter <b>certified</b> WtW values (PoS/PoC).</div>
+      </div>
+    </div>
+
+  </div>
+
+   <div class="modalBack" id="vesselModalBack">
+    <div class="modal">
+      <div class="mhead">
+        <div>
+          <div class="mtitle" id="vesselModalTitle">Vessel attachments</div>
+          <div class="mini" id="vesselModalSub">–</div>
+        </div>
+        <button class="x" id="vesselModalClose" aria-label="Close">×</button>
+      </div>
+
+      <div class="hint" style="margin-top:0;">
+        Attachments are stored per vessel. For persistence after closing, set Embed files = <b>embed</b>. UI stays minimal: filenames only.
+      </div>
+
+      <div class="grid" style="margin-top:10px;">
+        <div class="field">
+          <label class="labelrow">Attach documents</label>
+          <input id="vesselDocsInput" type="file" multiple />
+        </div>
+        <div class="field tiny">
+          <label>&nbsp;</label>
+          <button class="btn secondary" id="btnVesselDocsClear" style="width:100%;">Clear</button>
+        </div>
+      </div>
+
+      <details class="attach-box" open>
+        <summary>
+          <span class="leftwrap"><span class="clip" aria-hidden="true">📎</span><span class="title">Vessel documents</span></span>
+          <span class="count" id="vesselDocCount">0</span>
+        </summary>
+        <div class="docList" id="vesselDocList"></div>
+      </details>
+    </div>
+  </div>
+
+    <datalist id="dlFlags"></datalist>
+  <datalist id="dlVerifiers"></datalist>
+  <datalist id="dlShipClass"></datalist>
+
+<script>
+(() => {
+  const STORAGE_KEY = "FuelEU_WtW_POOL_OWNER_CUSTOMERS_PRO_v8";
+  let saveTimer = null;
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n, d=3) => (n===null || n===undefined || Number.isNaN(n))
+    ? "–" : Number(n).toLocaleString("en-GB",{minimumFractionDigits:d, maximumFractionDigits:d});
+  const fmt0 = (n) => (n===null || n===undefined || Number.isNaN(n))
+    ? "–" : Number(n).toLocaleString("en-GB",{minimumFractionDigits:0, maximumFractionDigits:0});
+  const numOrNull = (v) => {
+    if(v===null || v===undefined) return null;
+    const s = String(v).trim();
+    if(s==="") return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  };
+  const esc = (s) => String(s??"")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const initials = (name) => {
+    const t = (name||"").trim();
+    if(!t) return "CO";
+    const p = t.split(/\s+/).filter(Boolean);
+    return (p[0][0] + (p[1]?.[0] || p[0][0])).toUpperCase().slice(0,2);
+  };
+
+  function parseFlag(val) {
+    const s = (val || "").trim();
+    if(!s) return "";
+    const m = s.match(/^([A-Za-z]{2})\b/);
+    return (m ? m[1] : s).toUpperCase();
+  }
+
+  function flagEmoji(code) {
+    const c = parseFlag(code);
+    if(!c || c.length < 2) return "🏳️";
+    return String.fromCodePoint(...c.slice(0,2).split("").map(ch => 127397 + ch.charCodeAt(0)));
+  }
+
+  function debounce(fn, ms=250) {
+    let t=null;
+    return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
+  }
+
+  function setSaveStatus(txt){ $("saveStatus").textContent = txt; }
+  function showSaveFail(on){ $("saveFail").style.display = on ? "inline" : "none"; }
+  function scheduleSave(){ if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(saveState, 350); }
+
+  function saveState(){
+    try{
+      const payload = {
+        version: "8.0",
+        state,
+        ui: {
+          page: ui.page,
+          activeCustomer: state.activeCustomer,
+          cbSource: $("cbSource").value,
+          globalAlloc: $("globalAlloc").value,
+          globalCap: $("globalCap").value || ""
+        },
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      showSaveFail(false);
+      setSaveStatus("Saved " + new Date().toLocaleString("en-GB"));
+    }catch(e){
+      showSaveFail(true);
+      setSaveStatus("Not saved");
+    }
+  }
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    }catch(e){ return null; }
+  }
+
+  const FLAG_OPTIONS = [
+  "AD — Andorra",
+  "AE — United Arab Emirates",
+  "AF — Afghanistan",
+  "AG — Antigua and Barbuda",
+  "AI — Anguilla",
+  "AL — Albania",
+  "AM — Armenia",
+  "AO — Angola",
+  "AQ — Antarctica",
+  "AR — Argentina",
+  "AS — American Samoa",
+  "AT — Austria",
+  "AU — Australia",
+  "AW — Aruba",
+  "AX — Åland Islands",
+  "AZ — Azerbaijan",
+  "BA — Bosnia and Herzegovina",
+  "BB — Barbados",
+  "BD — Bangladesh",
+  "BE — Belgium",
+  "BF — Burkina Faso",
+  "BG — Bulgaria",
+  "BH — Bahrain",
+  "BI — Burundi",
+  "BJ — Benin",
+  "BL — Saint Barthélemy",
+  "BM — Bermuda",
+  "BN — Brunei Darussalam",
+  "BO — Bolivia",
+  "BQ — Bonaire, Sint Eustatius and Saba",
+  "BR — Brazil",
+  "BS — Bahamas",
+  "BT — Bhutan",
+  "BV — Bouvet Island",
+  "BW — Botswana",
+  "BY — Belarus",
+  "BZ — Belize",
+  "CA — Canada",
+  "CC — Cocos (Keeling) Islands",
+  "CD — Congo, The Democratic Republic of the",
+  "CF — Central African Republic",
+  "CG — Congo",
+  "CH — Switzerland",
+  "CI — Côte d'Ivoire",
+  "CK — Cook Islands",
+  "CL — Chile",
+  "CM — Cameroon",
+  "CN — China",
+  "CO — Colombia",
+  "CR — Costa Rica",
+  "CU — Cuba",
+  "CV — Cabo Verde",
+  "CW — Curaçao",
+  "CX — Christmas Island",
+  "CY — Cyprus",
+  "CZ — Czechia",
+  "DE — Germany",
+  "DJ — Djibouti",
+  "DK — Denmark",
+  "DM — Dominica",
+  "DO — Dominican Republic",
+  "DZ — Algeria",
+  "EC — Ecuador",
+  "EE — Estonia",
+  "EG — Egypt",
+  "EH — Western Sahara",
+  "ER — Eritrea",
+  "ES — Spain",
+  "ET — Ethiopia",
+  "FI — Finland",
+  "FJ — Fiji",
+  "FK — Falkland Islands (Malvinas)",
+  "FM — Micronesia, Federated States of",
+  "FO — Faroe Islands",
+  "FR — France",
+  "GA — Gabon",
+  "GB — United Kingdom",
+  "GD — Grenada",
+  "GE — Georgia",
+  "GF — French Guiana",
+  "GG — Guernsey",
+  "GH — Ghana",
+  "GI — Gibraltar",
+  "GL — Greenland",
+  "GM — Gambia",
+  "GN — Guinea",
+  "GP — Guadeloupe",
+  "GQ — Equatorial Guinea",
+  "GR — Greece",
+  "GS — South Georgia and the South Sandwich Islands",
+  "GT — Guatemala",
+  "GU — Guam",
+  "GW — Guinea-Bissau",
+  "GY — Guyana",
+  "HK — Hong Kong",
+  "HM — Heard Island and McDonald Islands",
+  "HN — Honduras",
+  "HR — Croatia",
+  "HT — Haiti",
+  "HU — Hungary",
+  "ID — Indonesia",
+  "IE — Ireland",
+  "IL — Israel",
+  "IM — Isle of Man",
+  "IN — India",
+  "IO — British Indian Ocean Territory",
+  "IQ — Iraq",
+  "IR — Iran, Islamic Republic of",
+  "IS — Iceland",
+  "IT — Italy",
+  "JE — Jersey",
+  "JM — Jamaica",
+  "JO — Jordan",
+  "JP — Japan",
+  "KE — Kenya",
+  "KG — Kyrgyzstan",
+  "KH — Cambodia",
+  "KI — Kiribati",
+  "KM — Comoros",
+  "KN — Saint Kitts and Nevis",
+  "KP — Korea, Democratic People's Republic of",
+  "KR — Korea, Republic of",
+  "KW — Kuwait",
+  "KY — Cayman Islands",
+  "KZ — Kazakhstan",
+  "LA — Lao People's Democratic Republic",
+  "LB — Lebanon",
+  "LC — Saint Lucia",
+  "LI — Liechtenstein",
+  "LK — Sri Lanka",
+  "LR — Liberia",
+  "LS — Lesotho",
+  "LT — Lithuania",
+  "LU — Luxembourg",
+  "LV — Latvia",
+  "LY — Libya",
+  "MA — Morocco",
+  "MC — Monaco",
+  "MD — Moldova",
+  "ME — Montenegro",
+  "MF — Saint Martin (French part)",
+  "MG — Madagascar",
+  "MH — Marshall Islands",
+  "MK — North Macedonia",
+  "ML — Mali",
+  "MM — Myanmar",
+  "MN — Mongolia",
+  "MO — Macao",
+  "MP — Northern Mariana Islands",
+  "MQ — Martinique",
+  "MR — Mauritania",
+  "MS — Montserrat",
+  "MT — Malta",
+  "MU — Mauritius",
+  "MV — Maldives",
+  "MW — Malawi",
+  "MX — Mexico",
+  "MY — Malaysia",
+  "MZ — Mozambique",
+  "NA — Namibia",
+  "NC — New Caledonia",
+  "NE — Niger",
+  "NF — Norfolk Island",
+  "NG — Nigeria",
+  "NI — Nicaragua",
+  "NL — Netherlands",
+  "NO — Norway",
+  "NP — Nepal",
+  "NR — Nauru",
+  "NU — Niue",
+  "NZ — New Zealand",
+  "OM — Oman",
+  "PA — Panama",
+  "PE — Peru",
+  "PF — French Polynesia",
+  "PG — Papua New Guinea",
+  "PH — Philippines",
+  "PK — Pakistan",
+  "PL — Poland",
+  "PM — Saint Pierre and Miquelon",
+  "PN — Pitcairn",
+  "PR — Puerto Rico",
+  "PS — Palestine, State of",
+  "PT — Portugal",
+  "PW — Palau",
+  "PY — Paraguay",
+  "QA — Qatar",
+  "RE — Réunion",
+  "RO — Romania",
+  "RS — Serbia",
+  "RU — Russian Federation",
+  "RW — Rwanda",
+  "SA — Saudi Arabia",
+  "SB — Solomon Islands",
+  "SC — Seychelles",
+  "SD — Sudan",
+  "SE — Sweden",
+  "SG — Singapore",
+  "SH — Saint Helena, Ascension and Tristan da Cunha",
+  "SI — Slovenia",
+  "SJ — Svalbard and Jan Mayen",
+  "SK — Slovakia",
+  "SL — Sierra Leone",
+  "SM — San Marino",
+  "SN — Senegal",
+  "SO — Somalia",
+  "SR — Suriname",
+  "SS — South Sudan",
+  "ST — Sao Tome and Principe",
+  "SV — El Salvador",
+  "SX — Sint Maarten (Dutch part)",
+  "SY — Syrian Arab Republic",
+  "SZ — Eswatini",
+  "TC — Turks and Caicos Islands",
+  "TD — Chad",
+  "TF — French Southern Territories",
+  "TG — Togo",
+  "TH — Thailand",
+  "TJ — Tajikistan",
+  "TK — Tokelau",
+  "TL — Timor-Leste",
+  "TM — Turkmenistan",
+  "TN — Tunisia",
+  "TO — Tonga",
+  "TR — Turkey",
+  "TT — Trinidad and Tobago",
+  "TV — Tuvalu",
+  "TW — Taiwan",
+  "TZ — Tanzania",
+  "UA — Ukraine",
+  "UG — Uganda",
+  "UM — United States Minor Outlying Islands",
+  "US — United States",
+  "UY — Uruguay",
+  "UZ — Uzbekistan",
+  "VA — Holy See (Vatican City State)",
+  "VC — Saint Vincent and the Grenadines",
+  "VE — Venezuela",
+  "VG — Virgin Islands, British",
+  "VI — Virgin Islands, U.S.",
+  "VN — Vietnam",
+  "VU — Vanuatu",
+  "WF — Wallis and Futuna",
+  "WS — Samoa",
+  "XK — Kosovo",
+  "YE — Yemen",
+  "YT — Mayotte",
+  "ZA — South Africa",
+  "ZM — Zambia",
+  "ZW — Zimbabwe"
+];
+  const VERIFIER_OPTIONS = [
+  "Normec Verifavia",
+  "DNV",
+  "Lloyd's Register (LR)",
+  "Bureau Veritas (BV)",
+  "RINA",
+  "ABS",
+  "CCS",
+  "ClassNK",
+  "KR (Korean Register)"
+];
+  const SHIP_CLASS_OPTIONS = [
+  "RoRo",
+  "RoPax",
+  "Tanker",
+  "Chemical Tanker",
+  "LNG Carrier",
+  "Bulk Carrier",
+  "Container",
+  "General Cargo",
+  "Passenger",
+  "Offshore",
+  "Other"
+];
+
+  function fillDatalist(id, values){
+    const dl = document.getElementById(id);
+    if(!dl) return;
+    dl.innerHTML = values.map(v => `<option value="${String(v).replaceAll('"','&quot;')}"></option>`).join("");
+  }
+
+  // Embedded template (xlsx)
+  const TEMPLATE_XLSX_B64 = "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";
+
+  // FuelEU targets
+  const DEFAULT_TARGETS = [
+    {from: 2025, reduction: 0.02},
+    {from: 2030, reduction: 0.06},
+    {from: 2035, reduction: 0.145},
+    {from: 2040, reduction: 0.31},
+    {from: 2045, reduction: 0.62},
+    {from: 2050, reduction: 0.80},
+  ];
+
+  const DEFAULT_FUELS = [
+    {name:"MGO/MDO (fossil)", lcv:42.7, wtw:90.63, rwd:1, unit:"t"},
+    {name:"VLSFO/HFO (fossil)", lcv:40.5, wtw:91.60, rwd:1, unit:"t"},
+    {name:"LNG (fossil) – enter your WtW", lcv:49.3, wtw:null, rwd:1, unit:"t"},
+    {name:"Bio-LNG (biomethane) – enter certified WtW", lcv:49.9, wtw:null, rwd:1, unit:"t"},
+    {name:"Biofuel/HVO/FAME – enter certified WtW", lcv:42.0, wtw:null, rwd:1, unit:"t"},
+    {name:"RFNBO (e-fuel) – enter certified WtW", lcv:50.0, wtw:null, rwd:2, unit:"t"},
+    {name:"Electricity (OPS)", lcv:null, wtw:null, rwd:1, unit:"kWh"},
+  ];
+
+  function blankVessel(name="New vessel") {
+    return {
+      name,
+      imo:"",
+      flag:"",
+      verifier:"",
+      shipClass:"",
+      energyMJ:null,
+      ghgie:null,
+      cb_calc:null,
+      cb_ind:null,
+      notes:"",
+      documents:[]
+    };
+  }
+
+  const state = {
+    targets: structuredClone(DEFAULT_TARGETS),
+    fuels: structuredClone(DEFAULT_FUELS),
+    consumption: [
+      {fuelIndex:0, amount:null, scope:1},
+      {fuelIndex:1, amount:null, scope:1},
+    ],
+    owner: {
+      name:"TT-Line",
+      logoDataUrl:null,
+      documents:[],
+      poolMode:"proportional",
+      cap:null,
+      fleet:[],
+      embedMode:"meta"
+    },
+    customers: [
+      {name:"Customer 1", logoDataUrl:null, documents:[], poolMode:"proportional", cap:null, fleet:[], embedMode:"meta"}
+    ],
+    activeCustomer:0
+  };
+
+  const ui = { page:"overview" };
+  const expandedRows = new Set();
+
+  function getTarget(year, refVal) {
+    const sorted = state.targets.slice().sort((a,b)=>a.from-b.from);
+    let active = sorted[0];
+    for(const t of sorted) if(year >= t.from) active = t;
+    return refVal * (1 - active.reduction);
+  }
+
+  function computeConsumptionRow(r) {
+    const f = state.fuels[r.fuelIndex] || state.fuels[0];
+    const amount = (r.amount===null || r.amount===undefined) ? null : Number(r.amount);
+    const scope = (r.scope===null || r.scope===undefined) ? 1 : Number(r.scope);
+    let energyMJ = null, emissionsT = null;
+    const flags = [];
+
+    if(amount===null || Number.isNaN(amount)) {
+      flags.push(`<span class="chip warn">amount?</span>`);
+      return {energyMJ:null, emissionsT:null, flagsHtml:flags.join(" "), unit:(f.unit||"t")};
+    }
+
+    if(f.unit === "MJ") {
+      energyMJ = amount * scope;
+    } else if(f.unit === "kWh") {
+      energyMJ = amount * 3.6 * scope;
+    } else {
+      if(f.lcv===null || f.lcv===undefined || Number.isNaN(Number(f.lcv))) {
+        flags.push(`<span class="chip warn">LCV?</span>`);
+      } else {
+        const kg = (f.unit === "kg") ? amount : amount * 1000;
+        energyMJ = kg * Number(f.lcv) * scope;
+      }
+    }
+
+    if(energyMJ !== null) {
+      if(f.wtw===null || f.wtw===undefined || Number.isNaN(Number(f.wtw))) {
+        flags.push(`<span class="chip warn">WtW?</span>`);
+      } else {
+        emissionsT = (energyMJ * Number(f.wtw)) / 1e6;
+      }
+    }
+
+    if((f.rwd||1) !== 1) flags.push(`<span class="chip ok">RWD=${fmt(f.rwd,1)}</span>`);
+    if(scope !== 1) flags.push(`<span class="chip">${fmt(scope,2)}×scope</span>`);
+
+    return {energyMJ, emissionsT, flagsHtml:flags.join(" "), unit:(f.unit||"t")};
+  }
+
+  function computeShipCalc() {
+    const year = Number($("year").value);
+    const refVal = Number($("refVal").value || 91.16);
+    const fWind = Number($("fWind").value || 1);
+    const target = getTarget(year, refVal);
+
+    let E = 0;
+    let Ew = 0;
+    let Emis_g = 0;
+    const missing = [];
+
+    state.consumption.forEach(r=>{
+      const f = state.fuels[r.fuelIndex] || state.fuels[0];
+      const {energyMJ} = computeConsumptionRow(r);
+      if(energyMJ === null) return;
+
+      E += energyMJ;
+      const rwd = (f.rwd??1);
+      Ew += energyMJ * rwd;
+
+      if(f.wtw===null || f.wtw===undefined || Number.isNaN(Number(f.wtw))) {
+        missing.push(f.name);
+      } else {
+        Emis_g += energyMJ * Number(f.wtw);
+      }
+    });
+
+    let actual = null;
+    if(Ew > 0) actual = fWind * (Emis_g / Ew);
+
+    let cb_t = null;
+    if(actual !== null && E > 0) cb_t = ((target - actual) * E) / 1e6;
+
+    let penalty = null;
+    if(cb_t !== null && cb_t < 0 && actual > 0) {
+      const cb_g = cb_t * 1e6;
+      penalty = (Math.abs(cb_g) / (actual * 41000)) * 2400;
+    }
+
+    return {target, actual, cb_t, penalty, E, missing:[...new Set(missing)]};
+  }
+
+  function cbOfVessel(v) {
+    const src = $("cbSource").value;
+    const ind = numOrNull(v.cb_ind);
+    const calc = numOrNull(v.cb_calc);
+    if(src === "calculated_only") return calc;
+    if(src === "indicated_only") return ind;
+    return (ind !== null && Number.isFinite(ind)) ? ind : calc;
+  }
+
+  function participantTotal(part) {
+    const fleet = part.fleet || [];
+    return fleet.map(cbOfVessel).filter(x=>x!==null && Number.isFinite(x)).reduce((a,b)=>a+b, 0);
+  }
+
+  function computeInternalPooling(part, mode, cap) {
+    const fleet = (part.fleet||[]).map((v,i)=>({i, cb: cbOfVessel(v)})).filter(x=>x.cb!==null && Number.isFinite(x.cb));
+    const donors = fleet.filter(x=>x.cb > 0);
+    const defs = fleet.filter(x=>x.cb < 0);
+    const S = donors.reduce((a,x)=>a+x.cb, 0);
+    const D = defs.reduce((a,x)=>a+Math.abs(x.cb), 0);
+
+    let transferable = Math.min(S, D);
+    if(cap!==null && cap>=0) transferable = Math.min(transferable, cap);
+
+    const tin = new Map();
+    const tout = new Map();
+
+    if(transferable>0 && donors.length && defs.length) {
+      if(mode === "sequential") {
+        const ds = defs.slice().sort((a,b)=>Math.abs(b.cb)-Math.abs(a.cb));
+        let rem = transferable;
+        for(const d of ds) {
+          if(rem<=0) break;
+          const need = Math.abs(d.cb);
+          const give = Math.min(need, rem);
+          tin.set(d.i, give);
+          rem -= give;
+        }
+      } else {
+        defs.forEach(d=> tin.set(d.i, transferable * (Math.abs(d.cb)/D)));
+      }
+      donors.forEach(d=> tout.set(d.i, transferable * (d.cb/S)));
+    }
+
+    return {transferable, tin, tout};
+  }
+
+  function computeGlobalPooling() {
+    const ownerTotal = participantTotal(state.owner);
+    const ownerSurp = Math.max(0, ownerTotal);
+    const customers = state.customers.map((c, idx)=>({idx, total: participantTotal(c)}));
+    const defs = customers.filter(x=>x.total < 0);
+    const deficitSum = defs.reduce((a,x)=>a+Math.abs(x.total), 0);
+
+    let transferable = Math.min(ownerSurp, deficitSum);
+    const cap = numOrNull($("globalCap").value);
+    if(cap!==null && cap>=0) transferable = Math.min(transferable, cap);
+
+    const alloc = $("globalAlloc").value;
+    const tin = new Map();
+    if(transferable>0 && defs.length) {
+      if(alloc === "sequential") {
+        const ds = defs.slice().sort((a,b)=>Math.abs(b.total)-Math.abs(a.total));
+        let rem = transferable;
+        for(const d of ds) {
+          if(rem<=0) break;
+          const need = Math.abs(d.total);
+          const give = Math.min(need, rem);
+          tin.set(d.idx, give);
+          rem -= give;
+        }
+      } else {
+        defs.forEach(d=> tin.set(d.idx, transferable * (Math.abs(d.total)/deficitSum)));
+      }
+    }
+
+    const restDef = Math.max(0, deficitSum - transferable);
+    const restSurp = Math.max(0, ownerSurp - transferable);
+    return { ownerTotal, ownerSurp, deficitSum, transferable, restDef, restSurp, tin };
+  }
+
+  function setActiveCustomer(idx) {
+    state.activeCustomer = Math.max(0, Math.min(idx, state.customers.length-1));
+    $("activeCustomerChip").textContent = "Customer: " + (state.customers[state.activeCustomer]?.name || "–");
+  }
+
+  function setPage(page) {
+    ui.page = page;
+    renderTabs();
+    scheduleSave();
+  }
+
+  function renderTabs() {
+    document.querySelectorAll(".tab").forEach(b=> b.classList.toggle("active", b.dataset.page === ui.page));
+    document.querySelectorAll(".page").forEach(p=> p.classList.toggle("active", p.id === "page-" + ui.page));
+    document.body.dataset.print = "current";
+  }
+
+  function renderYearOptions() {
+    const sel = $("year");
+    sel.innerHTML = "";
+    const now = new Date().getFullYear();
+    for(let y=2025; y<=2055; y++) {
+      const o = document.createElement("option");
+      o.value = String(y);
+      o.textContent = String(y);
+      if(y === now) o.selected = true;
+      sel.appendChild(o);
+    }
+  }
+
+  function renderCustomerSelects() {
+    const sel = $("customerSelect");
+    sel.innerHTML = "";
+    state.customers.forEach((c,i)=>{
+      const o = document.createElement("option");
+      o.value = String(i);
+      o.textContent = c.name;
+      if(i === state.activeCustomer) o.selected = true;
+      sel.appendChild(o);
+    });
+
+    const sel2 = $("calcCustomerTarget");
+    sel2.innerHTML = "";
+    state.customers.forEach((c,i)=>{
+      const o = document.createElement("option");
+      o.value = String(i);
+      o.textContent = c.name;
+      if(i === state.activeCustomer) o.selected = true;
+      sel2.appendChild(o);
+    });
+  }
+
+  function renderAvatar(el, name, logoDataUrl) {
+    el.innerHTML = "";
+    if(logoDataUrl) {
+      const img = document.createElement("img");
+      img.src = logoDataUrl;
+      img.alt = name + " logo";
+      el.appendChild(img);
+    } else {
+      const d = document.createElement("div");
+      d.className = "init";
+      d.textContent = initials(name);
+      el.appendChild(d);
+    }
+  }
+
+  function renderDocList(listEl, countEl, docs, onRemove, onDownload) {
+    if(!Array.isArray(docs)) docs = [];
+    countEl.textContent = String(docs.length);
+    listEl.innerHTML = "";
+    if(docs.length===0) {
+      const e = document.createElement("div");
+      e.className="mini";
+      e.style.padding="10px 12px";
+      e.textContent="No documents attached.";
+      listEl.appendChild(e);
+      return;
+    }
+    docs.forEach((doc,i)=>{
+      const div = document.createElement("div");
+      div.className="docItem";
+      div.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+          <span class="chip" style="background:rgba(0,121,167,0.10); color:var(--ttline-teal-blue); border-color:rgba(0,121,167,0.18);">📎</span>
+          <div class="docName" title="${esc(doc.name||"document")}"><b>${esc(doc.name||"document")}</b></div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex:0 0 auto;">
+          <button class="btn secondary" data-act="dl" data-i="${i}" ${doc.dataUrl?"":"disabled"} style="padding:6px 10px; box-shadow:none;">Download</button>
+          <button class="btn danger" data-act="rm" data-i="${i}" style="padding:6px 10px; box-shadow:none;">Remove</button>
+        </div>
+      `;
+      listEl.appendChild(div);
+    });
+    listEl.querySelectorAll('button[data-act="dl"]').forEach(b=>{
+      b.addEventListener("click", ()=> onDownload(Number(b.dataset.i)));
+    });
+    listEl.querySelectorAll('button[data-act="rm"]').forEach(b=>{
+      b.addEventListener("click", ()=> onRemove(Number(b.dataset.i)));
+    });
+  }
+
+  async function fileToDataUrl(file) {
+    return new Promise((resolve,reject)=>{
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result);
+      fr.onerror = () => reject(fr.error);
+      fr.readAsDataURL(file);
+    });
+  }
+
+    function renderFuelLibrary() {
+    const tb = $("tblFuels").querySelector("tbody");
+    tb.innerHTML = "";
+    state.fuels.forEach((f, i)=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="left"><input class="cell-input" data-i="${i}" data-k="name" value="${esc(f.name)}"></td>
+        <td class="right"><input class="cell-input right mono" data-i="${i}" data-k="lcv" type="number" step="0.0001" value="${f.lcv ?? ""}"></td>
+        <td class="right"><input class="cell-input right mono" data-i="${i}" data-k="wtw" type="number" step="0.0001" value="${f.wtw ?? ""}"></td>
+        <td class="right"><input class="cell-input right mono" data-i="${i}" data-k="rwd" type="number" step="0.1" value="${f.rwd ?? 1}"></td>
+        <td>
+          <select class="cell-input" data-i="${i}" data-k="unit">
+            <option value="t" ${f.unit==="t"?"selected":""}>t</option>
+            <option value="kg" ${f.unit==="kg"?"selected":""}>kg</option>
+            <option value="kWh" ${f.unit==="kWh"?"selected":""}>kWh</option>
+            <option value="MJ" ${f.unit==="MJ"?"selected":""}>MJ</option>
+          </select>
+        </td>
+        <td><button class="btn danger" data-act="delFuel" data-i="${i}" style="padding:6px 10px; box-shadow:none;">Delete</button></td>
+      `;
+      tb.appendChild(tr);
+    });
+
+    const recalcFuelDeb = debounce(()=>{
+      renderFuelLibrary();
+      renderConsumption();
+      renderShipCalc();
+      scheduleSave();
+    }, 200);
+
+    tb.querySelectorAll("input,select").forEach(el=>{
+      el.addEventListener("input", ()=>{
+        const i = Number(el.dataset.i);
+        const k = el.dataset.k;
+        const f = state.fuels[i];
+        if(!f) return;
+        if(k==="name") f.name = el.value;
+        if(k==="lcv") f.lcv = (el.value===""?null:Number(el.value));
+        if(k==="wtw") f.wtw = (el.value===""?null:Number(el.value));
+        if(k==="rwd") f.rwd = (el.value===""?1:Number(el.value));
+        if(k==="unit") f.unit = el.value;
+        scheduleSave();
+      });
+      el.addEventListener("change", recalcFuelDeb);
+      el.addEventListener("blur", recalcFuelDeb);
+    });
+
+    tb.querySelectorAll('button[data-act="delFuel"]').forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = Number(btn.dataset.i);
+        state.fuels.splice(i,1);
+        state.consumption.forEach(r=>{
+          if(r.fuelIndex===i) r.fuelIndex = 0;
+          if(r.fuelIndex>i) r.fuelIndex -= 1;
+        });
+        renderFuelLibrary();
+        renderConsumption();
+        renderShipCalc();
+        scheduleSave();
+      });
+    });
+  }
+
+
+  function computeTotals() {
+    let totE=0, totT=0;
+    state.consumption.forEach(r=>{
+      const calc = computeConsumptionRow(r);
+      if(calc.energyMJ !== null) totE += calc.energyMJ;
+      if(calc.emissionsT !== null) totT += calc.emissionsT;
+    });
+    $("totE").textContent = fmt(totE,2);
+    $("totT").textContent = fmt(totT,3);
+  }
+
+  function updateConsumptionRowUI(idx, tr) {
+    const r = state.consumption[idx];
+    const calc = computeConsumptionRow(r);
+    tr.querySelector('[data-cell="unit"]').innerHTML = `<span class="chip">${esc(calc.unit)}</span>`;
+    tr.querySelector('[data-cell="energy"]').textContent = fmt(calc.energyMJ,2);
+    tr.querySelector('[data-cell="emis"]').textContent = fmt(calc.emissionsT,3);
+    tr.querySelector('[data-cell="flags"]').innerHTML = calc.flagsHtml;
+  }
+
+  function renderConsumption() {
+    const tb = $("tblCons").querySelector("tbody");
+    tb.innerHTML = "";
+
+    state.consumption.forEach((r, idx)=>{
+      const calc = computeConsumptionRow(r);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="left"><select class="cell-input" data-idx="${idx}" data-k="fuel"></select></td>
+        <td class="right"><input class="cell-input right mono" data-idx="${idx}" data-k="amount" type="number" step="0.0001" value="${r.amount ?? ""}"></td>
+        <td data-cell="unit"><span class="chip">${esc(calc.unit)}</span></td>
+        <td class="right"><input class="cell-input right mono" data-idx="${idx}" data-k="scope" type="number" step="0.01" value="${r.scope ?? 1}"></td>
+        <td class="right mono" data-cell="energy">${fmt(calc.energyMJ,2)}</td>
+        <td class="right mono" data-cell="emis">${fmt(calc.emissionsT,3)}</td>
+        <td class="left" data-cell="flags">${calc.flagsHtml}</td>
+        <td><button class="btn danger" data-act="delRow" data-idx="${idx}" style="padding:6px 10px; box-shadow:none;">Delete</button></td>
+      `;
+      tb.appendChild(tr);
+
+      const sel = tr.querySelector('select[data-k="fuel"]');
+      state.fuels.forEach((ff, fi)=>{
+        const o = document.createElement("option");
+        o.value = String(fi);
+        o.textContent = ff.name;
+        if(fi === r.fuelIndex) o.selected = true;
+        sel.appendChild(o);
+      });
+
+      const updateAll = debounce(()=>{
+        updateConsumptionRowUI(idx, tr);
+        computeTotals();
+        renderShipCalc();
+        scheduleSave();
+      }, 60);
+
+      tr.querySelector('input[data-k="amount"]').addEventListener("input", (e)=>{
+        state.consumption[idx].amount = (e.target.value===""?null:Number(e.target.value));
+        updateAll();
+      });
+      tr.querySelector('input[data-k="scope"]').addEventListener("input", (e)=>{
+        state.consumption[idx].scope = (e.target.value===""?1:Number(e.target.value));
+        updateAll();
+      });
+      sel.addEventListener("change", ()=>{
+        state.consumption[idx].fuelIndex = Number(sel.value);
+        updateAll();
+      });
+
+      tr.querySelector('button[data-act="delRow"]').addEventListener("click", ()=>{
+        state.consumption.splice(idx,1);
+        renderConsumption();
+        renderShipCalc();
+        scheduleSave();
+      });
+    });
+
+    computeTotals();
+  }
+
+  function renderShipCalc() {
+    const res = computeShipCalc();
+    $("kTarget").textContent = res ? `${fmt(res.target,5)} gCO2e/MJ` : "–";
+    $("kActual").textContent = (!res || res.actual===null) ? "–" : `${fmt(res.actual,5)} gCO2e/MJ`;
+
+    if(!res || res.cb_t===null) {
+      $("kCB").textContent = "–";
+    } else {
+      const tag = res.cb_t>0 ? `<span class="chip ok">Surplus</span>` : (res.cb_t<0 ? `<span class="chip bad">Deficit</span>` : `<span class="chip">0</span>`);
+      $("kCB").innerHTML = `${fmt(res.cb_t,3)} tCO2e ${tag}`;
+    }
+
+    $("kPenalty").textContent = (!res || res.penalty===null) ? "–" : `€${fmt0(res.penalty)}`;
+
+    const w = $("warnCalc");
+    if(res && res.missing.length) {
+      w.style.display = "block";
+      w.innerHTML = `Missing WtW intensity for: <b>${res.missing.map(esc).join(", ")}</b>`;
+    } else {
+      w.style.display = "none"; w.textContent = "";
+    }
+  }
+
+  function renderOwner() {
+    $("ownerName").value = state.owner.name || "";
+    $("embedModeOwner").value = state.owner.embedMode || "meta";
+    $("ownerPoolMode").value = state.owner.poolMode || "proportional";
+    $("ownerCap").value = state.owner.cap ?? "";
+
+    renderAvatar($("ownerAvatar"), state.owner.name, state.owner.logoDataUrl);
+
+    renderDocList(
+      $("ownerDocList"),
+      $("ownerDocCount"),
+      state.owner.documents,
+      (i)=>{ state.owner.documents.splice(i,1); renderOwner(); renderOverview(); scheduleSave(); },
+      (i)=>{
+        const doc = state.owner.documents[i];
+        if(!doc?.dataUrl) return;
+        const a = document.createElement("a");
+        a.href = doc.dataUrl;
+        a.download = doc.name || "document";
+        a.click();
+      }
+    );
+
+    renderFleetTable("owner");
+  }
+
+  function renderCustomers() {
+    renderCustomerSelects();
+    const c = state.customers[state.activeCustomer];
+    $("embedModeCustomer").value = c.embedMode || "meta";
+    $("customerPoolMode").value = c.poolMode || "proportional";
+    $("customerCap").value = c.cap ?? "";
+
+    renderAvatar($("customerAvatar"), c.name, c.logoDataUrl);
+
+    renderDocList(
+      $("customerDocList"),
+      $("customerDocCount"),
+      c.documents,
+      (i)=>{ c.documents.splice(i,1); renderCustomers(); renderOverview(); scheduleSave(); },
+      (i)=>{
+        const doc = c.documents[i];
+        if(!doc?.dataUrl) return;
+        const a = document.createElement("a");
+        a.href = doc.dataUrl;
+        a.download = doc.name || "document";
+        a.click();
+      }
+    );
+
+    const total = participantTotal(c);
+    const status = total >= -0.0005 ? `<span class="chip ok">Compliant</span>` : `<span class="chip bad">Non-compliant</span>`;
+    $("customerSummary").innerHTML = `${fmt(total,3)} tCO2e ${status}`;
+
+    renderFleetTable("customer");
+  }
+
+  function renderFleetTable(which) {
+    const isOwner = which === "owner";
+    const part = isOwner ? state.owner : state.customers[state.activeCustomer];
+    const mode = isOwner ? $("ownerPoolMode").value : $("customerPoolMode").value;
+    const cap = numOrNull(isOwner ? $("ownerCap").value : $("customerCap").value);
+
+    const { tin, tout } = computeInternalPooling(part, mode, cap);
+
+    const tb = (isOwner ? $("tblOwnerFleet") : $("tblCustomerFleet")).querySelector("tbody");
+    tb.innerHTML = "";
+
+    (part.fleet||[]).forEach((v, i)=>{
+      if(!Array.isArray(v.documents)) v.documents = [];
+      const docsCount = v.documents.length;
+
+      const cb = cbOfVessel(v);
+      const trIn = tin.get(i) || 0;
+      const trOut = tout.get(i) || 0;
+      const pooled = (cb===null) ? null : (cb - trOut + trIn);
+
+      const status = pooled===null ? `<span class="chip">n/a</span>`
+        : (pooled>0.0005 ? `<span class="chip ok">Compliant</span>` : (pooled<-0.0005 ? `<span class="chip bad">Non-compliant</span>` : `<span class="chip">Balanced</span>`));
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="left"><input class="cell-input" data-i="${i}" data-k="name" value="${esc(v.name||"")}"></td>
+        <td class="right"><input class="cell-input right mono" data-i="${i}" data-k="imo" value="${esc(v.imo||"")}" placeholder="7 digits"></td>
+        <td class="left">
+          <div class="cell-flex">
+            <span class="flag-emoji" data-flagemoji="1">${flagEmoji(v.flag)}</span>
+            <input class="cell-input" list="dlFlags" data-i="${i}" data-k="flag" value="${esc(v.flag||"")}" placeholder="e.g., DE — Germany">
+          </div>
+        </td>
+        <td class="left"><input class="cell-input" list="dlVerifiers" data-i="${i}" data-k="verifier" value="${esc(v.verifier||"")}" placeholder="e.g., Normec Verifavia"></td>
+        <td class="left"><input class="cell-input" list="dlShipClass" data-i="${i}" data-k="shipClass" value="${esc(v.shipClass||"")}" placeholder="e.g., RoPax"></td>
+        <td class="right"><input class="cell-input right mono" data-i="${i}" data-k="energyMJ" type="number" step="0.01" value="${v.energyMJ ?? ""}"></td>
+        <td class="right"><input class="cell-input right mono" data-i="${i}" data-k="ghgie" type="number" step="0.00001" value="${v.ghgie ?? ""}"></td>
+        <td class="right"><input class="cell-input right mono" data-i="${i}" data-k="cb_calc" type="number" step="0.001" value="${v.cb_calc ?? ""}"></td>
+        <td class="right"><input class="cell-input right mono" data-i="${i}" data-k="cb_ind" type="number" step="0.001" value="${v.cb_ind ?? ""}"></td>
+        <td class="right mono">${(cb===null) ? "–" : (trIn>0?`+${fmt(trIn,3)}`:(trOut>0?`-${fmt(Math.abs(trOut),3)}`:fmt(0,3)))}</td>
+        <td class="right mono">${pooled===null ? "–" : fmt(pooled,3)}</td>
+        <td class="left">${status}</td>
+        <td>
+          <div style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap;">
+            <button class="btn secondary" data-act="docs" data-i="${i}" style="padding:6px 10px; box-shadow:none;">Docs (${docsCount})</button>
+            <button class="btn danger" data-act="del" data-i="${i}" style="padding:6px 10px; box-shadow:none;">Delete</button>
+          </div>
+        </td>
+      `;
+      tb.appendChild(tr);
+    });
+
+   
+    const recalcFleetDebounced = debounce(()=>{
+      if(isOwner) renderOwner(); else renderCustomers();
+      renderOverview();
+      scheduleSave();
+    }, 180);
+
+    tb.querySelectorAll("input").forEach(inp=>{
+      inp.addEventListener("input", ()=>{
+        const i = Number(inp.dataset.i);
+        const k = inp.dataset.k;
+        const v = part.fleet[i];
+        if(!v) return;
+
+        if(k==="name") v.name = inp.value;
+        if(k==="imo") v.imo = inp.value;
+        if(k==="flag") {
+          v.flag = parseFlag(inp.value);
+          const emoji = inp.closest("td")?.querySelector('[data-flagemoji="1"]');
+          if(emoji) emoji.textContent = flagEmoji(v.flag);
+        }
+        if(k==="verifier") v.verifier = (inp.value||"").trim();
+        if(k==="shipClass") v.shipClass = (inp.value||"").trim();
+        if(k==="energyMJ") v.energyMJ = numOrNull(inp.value);
+        if(k==="ghgie") v.ghgie = numOrNull(inp.value);
+        if(k==="cb_calc") v.cb_calc = numOrNull(inp.value);
+        if(k==="cb_ind") v.cb_ind = numOrNull(inp.value);
+
+        scheduleSave();
+      });
+
+      inp.addEventListener("change", recalcFleetDebounced);
+      inp.addEventListener("blur", recalcFleetDebounced);
+    });
+
+    tb.querySelectorAll('button[data-act="del"]').forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const i = Number(b.dataset.i);
+        part.fleet.splice(i,1);
+        if(isOwner) renderOwner(); else renderCustomers();
+        renderOverview();
+        scheduleSave();
+      });
+    });
+    tb.querySelectorAll('button[data-act="docs"]').forEach(b=>{
+      b.addEventListener("click", ()=> openVesselDocsModal(which, Number(b.dataset.i)));
+    });
+
+    const totals = (part.fleet||[]).map(cbOfVessel).filter(x=>x!==null && Number.isFinite(x));
+    const hasDef = totals.some(x=>x<0);
+    const hasSur = totals.some(x=>x>0);
+    const warnEl = isOwner ? $("warnOwnerFleet") : $("warnCustomerFleet");
+    if(hasDef && !hasSur) {
+      warnEl.style.display="block";
+      warnEl.textContent = "Note: Only deficits (no surplus) – internal pooling cannot offset vessel deficits.";
+    } else {
+      warnEl.style.display="none"; warnEl.textContent="";
+    }
+  }
+
+  function renderOverview() {
+    const gp = computeGlobalPooling();
+
+    $("kOwnerSurp").textContent = fmt(gp.ownerSurp,3);
+    $("kCustDef").textContent = fmt(gp.deficitSum,3);
+    $("kTransferable").textContent = fmt(gp.transferable,3);
+    $("kRest").innerHTML = gp.restDef>0
+      ? `${fmt(gp.restDef,3)} <span class="chip bad">remaining deficit</span>`
+      : `${fmt(gp.restSurp,3)} <span class="chip ok">remaining surplus</span>`;
+
+    const tbody = $("tblOverview").querySelector("tbody");
+    tbody.innerHTML = "";
+
+    const rows = [];
+    rows.push({
+      kind:"owner",
+      label: state.owner.name,
+      logo: state.owner.logoDataUrl,
+      vessels: (state.owner.fleet||[]).length,
+      total: gp.ownerTotal,
+      transfer: -gp.transferable,
+      pooled: gp.ownerTotal - gp.transferable
+    });
+    state.customers.forEach((c, idx)=>{
+      const t = participantTotal(c);
+      const recv = gp.tin.get(idx) || 0;
+      rows.push({
+        kind:"customer",
+        idx,
+        label: c.name,
+        logo: c.logoDataUrl,
+        vessels: (c.fleet||[]).length,
+        total: t,
+        transfer: recv,
+        pooled: t + recv
+      });
+    });
+
+    rows.forEach((r, rowIndex)=>{
+      const expanded = expandedRows.has(rowIndex);
+      const caret = expanded ? "▾" : "▸";
+      const status = r.pooled>0.0005 ? `<span class="chip ok">Compliant</span>`
+        : (r.pooled<-0.0005 ? `<span class="chip bad">Non-compliant</span>` : `<span class="chip">Balanced</span>`);
+
+      const tr = document.createElement("tr");
+      tr.className = "partRow" + ((r.kind==="customer" && r.idx===state.activeCustomer) ? " active" : "");
+      tr.dataset.row = String(rowIndex);
+      tr.innerHTML = `
+        <td class="left">
+          <span class="caret">${caret}</span>
+          ${r.logo ? `<img class="logo-icon" src="${r.logo}" alt="">` : `<span class="chip" style="margin-right:8px;">${initials(r.label)}</span>`}
+          <b>${esc(r.label)}</b>
+          ${r.kind==="owner" ? `<span class="chip ok">Pool Owner</span>` : `<span class="chip">Customer</span>`}
+        </td>
+        <td class="right mono">${fmt0(r.vessels)}</td>
+        <td class="right mono">${fmt(r.total,3)}</td>
+        <td class="right mono">${r.transfer>0?`+${fmt(r.transfer,3)}`:(r.transfer<0?`-${fmt(Math.abs(r.transfer),3)}`:fmt(0,3))}</td>
+        <td class="right mono">${fmt(r.pooled,3)}</td>
+        <td class="left">${status}</td>
+      `;
+      tbody.appendChild(tr);
+
+      if(expanded) {
+        const part = (r.kind==="owner") ? state.owner : state.customers[r.idx];
+        const fleet = part.fleet || [];
+        const shipRows = fleet.length
+          ? fleet.map(v=>{
+              const cb = cbOfVessel(v);
+              const docs = (v.documents||[]).length;
+              return `<tr>
+                <td class="left">${esc(v.name||"Vessel")}</td>
+                <td class="right mono">${esc(v.imo||"")}</td>
+                <td class="left">${flagEmoji(v.flag)}&nbsp;${esc(v.flag||"")}</td>
+                <td class="left">${esc(v.shipClass||"")}</td>
+                <td class="right mono">${cb===null?"–":fmt(cb,3)}</td>
+                <td class="left">${docs?`<span class="chip ok">Docs ${docs}</span>`:`<span class="chip">Docs 0</span>`}</td>
+              </tr>`;
+            }).join("")
+          : `<tr><td class="left" colspan="6">No vessels.</td></tr>`;
+
+        const tr2 = document.createElement("tr");
+        tr2.innerHTML = `
+          <td colspan="6" class="left">
+            <div class="expandBox">
+              <div class="expandGrid">
+                <div>
+                  <div style="font-weight:900; margin-bottom:8px;">Fleet</div>
+                  <div class="tablewrap" style="margin-top:0;">
+                    <table style="min-width:0; font-size:0.72rem;">
+                      <thead><tr>
+                        <th class="left">Vessel</th>
+                        <th class="right">IMO</th>
+                        <th class="left">Flag</th>
+                        <th class="left">Class</th>
+                        <th class="right">CB [tCO2e]</th>
+                        <th class="left">Attachments</th>
+                      </tr></thead>
+                      <tbody>${shipRows}</tbody>
+                    </table>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-weight:900; margin-bottom:8px;">Notes</div>
+                  <div class="mini">
+                    Logo icon: ${part.logoDataUrl?`<span class="chip ok">yes</span>`:`<span class="chip">no</span>`}<br>
+                    Company docs: <span class="chip ok">${(part.documents||[]).length}</span><br><br>
+                    Tip: Double‑click row to open details.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr2);
+      }
+    });
+
+    tbody.querySelectorAll("tr.partRow").forEach(tr=>{
+      tr.addEventListener("click", ()=>{
+        const r = Number(tr.dataset.row);
+        if(expandedRows.has(r)) expandedRows.delete(r);
+        else expandedRows.add(r);
+        renderOverview();
+        scheduleSave();
+      });
+      tr.addEventListener("dblclick", ()=>{
+        const r = Number(tr.dataset.row);
+        if(r===0) {
+          setPage("owner");
+        } else {
+          setActiveCustomer(r-1);
+          renderCustomerSelects();
+          renderCustomers();
+          setPage("customers");
+        }
+        scheduleSave();
+      });
+    });
+
+    const w = $("warnOverview");
+    const hasDef = state.customers.some(c=>participantTotal(c)<0);
+    if(hasDef && gp.ownerSurp<=0) {
+      w.style.display="block";
+      w.textContent="Note: Customers have deficits, but pool owner has no surplus available (based on selected CB source).";
+    } else {
+      w.style.display="none"; w.textContent="";
+    }
+  }
+
+   let vesselModalCtx = { which:null, index:null };
+
+  function openVesselDocsModal(which, index) {
+    vesselModalCtx = { which, index };
+    const part = (which==="owner") ? state.owner : state.customers[state.activeCustomer];
+    const v = part.fleet[index];
+    if(!Array.isArray(v.documents)) v.documents = [];
+    $("vesselModalTitle").textContent = `Vessel attachments – ${v.name||"Vessel"}`;
+    $("vesselModalSub").textContent = (which==="owner") ? `Pool Owner · Embed mode: ${$("embedModeOwner").value}` : `Customer: ${state.customers[state.activeCustomer].name} · Embed mode: ${$("embedModeCustomer").value}`;
+    renderVesselDocsList();
+    $("vesselModalBack").classList.add("show");
+  }
+  function closeVesselDocsModal() {
+    $("vesselModalBack").classList.remove("show");
+    $("vesselDocsInput").value = "";
+    vesselModalCtx = { which:null, index:null };
+  }
+  function renderVesselDocsList() {
+    const list = $("vesselDocList");
+    const count = $("vesselDocCount");
+    list.innerHTML = "";
+    if(vesselModalCtx.which===null) return;
+
+    const part = (vesselModalCtx.which==="owner") ? state.owner : state.customers[state.activeCustomer];
+    const v = part.fleet[vesselModalCtx.index];
+    if(!Array.isArray(v.documents)) v.documents = [];
+    count.textContent = String(v.documents.length);
+
+    if(v.documents.length===0) {
+      const e = document.createElement("div");
+      e.className="mini";
+      e.style.padding="10px 12px";
+      e.textContent="No documents attached.";
+      list.appendChild(e);
+      return;
+    }
+
+    v.documents.forEach((doc,i)=>{
+      const div = document.createElement("div");
+      div.className="docItem";
+      div.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+          <span class="chip" style="background:rgba(0,121,167,0.10); color:var(--ttline-teal-blue); border-color:rgba(0,121,167,0.18);">📎</span>
+          <div class="docName" title="${esc(doc.name||"document")}"><b>${esc(doc.name||"document")}</b></div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex:0 0 auto;">
+          <button class="btn secondary" data-act="dl" data-i="${i}" ${doc.dataUrl?"":"disabled"} style="padding:6px 10px; box-shadow:none;">Download</button>
+          <button class="btn danger" data-act="rm" data-i="${i}" style="padding:6px 10px; box-shadow:none;">Remove</button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+
+    list.querySelectorAll('button[data-act="dl"]').forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const i = Number(b.dataset.i);
+        const doc = v.documents[i];
+        if(!doc?.dataUrl) return;
+        const a = document.createElement("a");
+        a.href = doc.dataUrl;
+        a.download = doc.name || "document";
+        a.click();
+      });
+    });
+    list.querySelectorAll('button[data-act="rm"]').forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const i = Number(b.dataset.i);
+        v.documents.splice(i,1);
+        renderVesselDocsList();
+        if(vesselModalCtx.which==="owner") renderOwner(); else renderCustomers();
+        renderOverview();
+        scheduleSave();
+      });
+    });
+  }
+
+  function exportJSON() {
+    const payload = {
+      version:"8.0",
+      state,
+      ui: {
+        page: ui.page,
+        activeCustomer: state.activeCustomer,
+        cbSource: $("cbSource").value,
+        globalAlloc: $("globalAlloc").value,
+        globalCap: $("globalCap").value || ""
+      },
+      exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "FuelEU_WtW_Pool_config.json"; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 500);
+  }
+
+  function importJSON() {
+    const inp = document.createElement("input");
+    inp.type="file"; inp.accept="application/json";
+    inp.onchange = async () => {
+      const f = inp.files[0];
+      if(!f) return;
+      const txt = await f.text();
+      try {
+        const payload = JSON.parse(txt);
+        if(payload.state) Object.assign(state, payload.state);
+
+        if(!Array.isArray(state.targets)) state.targets = structuredClone(DEFAULT_TARGETS);
+        if(!Array.isArray(state.fuels)) state.fuels = structuredClone(DEFAULT_FUELS);
+        if(!Array.isArray(state.consumption)) state.consumption = [];
+        if(!state.owner) state.owner = {name:"TT-Line", logoDataUrl:null, documents:[], poolMode:"proportional", cap:null, fleet:[], embedMode:"meta"};
+        if(!Array.isArray(state.customers) || state.customers.length===0) state.customers = [{name:"Customer 1", logoDataUrl:null, documents:[], poolMode:"proportional", cap:null, fleet:[], embedMode:"meta"}];
+
+        // ensure shipClass exists
+        state.owner.fleet?.forEach(v=>{ if(v.shipClass===undefined) v.shipClass=""; if(!Array.isArray(v.documents)) v.documents=[]; });
+        state.customers.forEach(c=>{
+          c.fleet?.forEach(v=>{ if(v.shipClass===undefined) v.shipClass=""; if(!Array.isArray(v.documents)) v.documents=[]; });
+          if(!Array.isArray(c.documents)) c.documents=[];
+        });
+        if(!Array.isArray(state.owner.documents)) state.owner.documents=[];
+
+        if(payload.ui) {
+          ui.page = payload.ui.page || "overview";
+          setActiveCustomer(payload.ui.activeCustomer ?? 0);
+          $("cbSource").value = payload.ui.cbSource || "indicated_first";
+          $("globalAlloc").value = payload.ui.globalAlloc || "proportional";
+          $("globalCap").value = payload.ui.globalCap || "";
+        }
+
+        renderAll();
+        scheduleSave();
+      } catch(e) {
+        alert("Import failed: " + e.message);
+      }
+    };
+    inp.click();
+  }
+
+  function resetSaved() {
+    if(!confirm("Reset: delete all saved data (including auto-save)?")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+
+  function exportPdfCurrent(){ document.body.dataset.print="current"; setTimeout(()=>window.print(), 50); }
+  function exportPdfAll(){
+    document.body.dataset.print="all";
+    document.querySelectorAll(".page").forEach(p=>p.classList.add("active"));
+    setTimeout(()=>{
+      window.print();
+      setTimeout(()=>{ document.body.dataset.print="current"; renderTabs(); }, 150);
+    }, 60);
+  }
+
+   function showImportResult(html) {
+    const box = $("importResult");
+    if(!box) return;
+    box.style.display = "block";
+    box.innerHTML = html;
+  }
+
+  function downloadTemplate() {
+    try {
+      const bin = atob(TEMPLATE_XLSX_B64);
+      const bytes = new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "FuelEU_WtW_Fleet_Upload_Template_v1.xlsx";
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 500);
+    } catch(e) {
+      alert("Template download failed: " + e.message);
+    }
+  }
+
+  function normKey(k){ return String(k||"").toLowerCase().replace(/[^a-z0-9]+/g,""); }
+
+  function mapRow(r) {
+    const o = {};
+    const m = {};
+    Object.keys(r||{}).forEach(k=> m[normKey(k)] = k);
+    const pick = (want, alts=[])=>{
+      for(const a of [want, ...alts]) {
+        const key = m[normKey(a)];
+        if(key !== undefined) return r[key];
+      }
+      return "";
+    };
+    o.CustomerName = pick("CustomerName", ["Company","CompanyName","Customer"]);
+    o.VesselName = pick("VesselName", ["Vessel","Name","Vessel name"]);
+    o.IMO = pick("IMO", ["IMONumber","IMO Number"]);
+    o.FlagISO2 = pick("FlagISO2", ["Flag","FlagState"]);
+    o.Verifier = pick("Verifier", ["VerifierName"]);
+    o.ShipClass = pick("ShipClass", ["Class","VesselClass","Ship Type","ShipType"]);
+    o.Energy_MJ = pick("Energy_MJ", ["EnergyMJ","Energy"]);
+    o.GHGIE = pick("GHGIE_actual_gCO2e_MJ", ["GHGIE_actual","GHGIE"]);
+    o.CB_calc = pick("Calc_CB_tCO2e", ["CalcCB","CB_calc"]);
+    o.CB_ind = pick("Indicated_CB_tCO2e", ["IndicatedCB","CB_ind"]);
+    o.Notes = pick("Notes", ["Note"]);
+    return o;
+  }
+
+  function upsertCustomer(name) {
+    const n = (name||"").trim();
+    if(!n) return null;
+    let idx = state.customers.findIndex(c => (c.name||"").toLowerCase() === n.toLowerCase());
+    if(idx < 0) {
+      state.customers.push({name:n, logoDataUrl:null, documents:[], poolMode:"proportional", cap:null, fleet:[], embedMode:"meta"});
+      idx = state.customers.length - 1;
+    }
+    return state.customers[idx];
+  }
+
+  async function importFromCSV(file) {
+    const txt = await file.text();
+    const lines = txt.split(/\r?\n/).filter(l=>l.trim().length);
+    if(lines.length < 2) throw new Error("CSV has no data rows.");
+    const sep = (lines[0].includes(";") && !lines[0].includes(",")) ? ";" : ",";
+    const headers = lines[0].split(sep).map(h=>h.trim());
+    const rows = [];
+    for(let i=1;i<lines.length;i++) {
+      const parts = lines[i].split(sep);
+      const obj = {};
+      headers.forEach((h, j)=> obj[h] = (parts[j] ?? "").trim());
+      rows.push(obj);
+    }
+    return {
+      OwnerFleet: rows.filter(r => !(r.CustomerName||"").trim()),
+      CustomerFleet: rows.filter(r => (r.CustomerName||"").trim())
+    };
+  }
+
+  function importRows(ownerRows, custRows) {
+    const mode = $("importMode")?.value || "append";
+    let ownerAdded = 0, custAdded = 0, errors = 0;
+
+    if(mode === "replace") {
+      state.owner.fleet = [];
+    }
+
+    for(const rr of ownerRows) {
+      const r = mapRow(rr);
+      if(!String(r.VesselName||"").trim()) continue;
+      const v = blankVessel(String(r.VesselName).trim());
+      v.imo = String(r.IMO||"").trim();
+      v.flag = parseFlag(String(r.FlagISO2||""));
+      v.verifier = String(r.Verifier||"").trim();
+      v.shipClass = String(r.ShipClass||"").trim();
+      v.energyMJ = numOrNull(r.Energy_MJ);
+      v.ghgie = numOrNull(r.GHGIE);
+      v.cb_calc = numOrNull(r.CB_calc);
+      v.cb_ind = numOrNull(r.CB_ind);
+      v.notes = String(r.Notes||"").trim();
+      state.owner.fleet.push(v);
+      ownerAdded++;
+    }
+
+    const seenCustomers = new Set();
+    for(const rr of custRows) {
+      const r = mapRow(rr);
+      const cn = String(r.CustomerName||"").trim();
+      const vn = String(r.VesselName||"").trim();
+      if(!cn || !vn) { errors++; continue; }
+      const c = upsertCustomer(cn);
+      if(!c) { errors++; continue; }
+      if(mode === "replace" && !seenCustomers.has(cn.toLowerCase())) {
+        c.fleet = [];
+        seenCustomers.add(cn.toLowerCase());
+      }
+      const v = blankVessel(vn);
+      v.imo = String(r.IMO||"").trim();
+      v.flag = parseFlag(String(r.FlagISO2||""));
+      v.verifier = String(r.Verifier||"").trim();
+      v.shipClass = String(r.ShipClass||"").trim();
+      v.energyMJ = numOrNull(r.Energy_MJ);
+      v.ghgie = numOrNull(r.GHGIE);
+      v.cb_calc = numOrNull(r.CB_calc);
+      v.cb_ind = numOrNull(r.CB_ind);
+      v.notes = String(r.Notes||"").trim();
+      c.fleet.push(v);
+      custAdded++;
+    }
+
+    return {ownerAdded, custAdded, errors};
+  }
+
+  async function handleImportFleet() {
+    const fi = $("fleetUpload");
+    const file = fi?.files?.[0];
+    if(!file) return alert("Please choose a file first.");
+
+    try {
+      let ownerRows = [];
+      let custRows = [];
+      const name = file.name.toLowerCase();
+
+      if(name.endsWith(".csv")) {
+        const parsed = await importFromCSV(file);
+        ownerRows = parsed.OwnerFleet;
+        custRows = parsed.CustomerFleet;
+      } else {
+        if(typeof XLSX === "undefined") {
+          alert("XLSX library not available (CDN blocked). Please export as CSV and upload CSV.");
+          return;
+        }
+        const buf = await file.arrayBuffer();
+        const wb = XLSX.read(buf, {type:"array"});
+        const sheetOwner = wb.Sheets["OwnerFleet"] || wb.Sheets[wb.SheetNames[0]];
+        const sheetCust = wb.Sheets["CustomerFleet"] || null;
+
+        const toRows = (sh)=> XLSX.utils.sheet_to_json(sh, {defval:""});
+        if(sheetOwner) ownerRows = toRows(sheetOwner);
+        if(sheetCust) custRows = toRows(sheetCust);
+
+        if(!sheetCust && ownerRows.length) {
+          custRows = ownerRows.filter(r => (r.CustomerName||r.customername||"").toString().trim().length);
+          ownerRows = ownerRows.filter(r => !(r.CustomerName||r.customername||"").toString().trim().length);
+        }
+      }
+
+      const res = importRows(ownerRows, custRows);
+      renderCustomerSelects();
+      renderOwner();
+      renderCustomers();
+      renderOverview();
+      scheduleSave();
+
+      showImportResult(
+        `<b>Import complete.</b><br>
+         Owner vessels imported: <span class="chip ok">${res.ownerAdded}</span><br>
+         Customer vessels imported: <span class="chip ok">${res.custAdded}</span><br>
+         Rows skipped/errors: <span class="chip ${res.errors? "warn":"ok"}">${res.errors}</span>`
+      );
+    } catch(e) {
+      showImportResult(`<span class="chip bad">Import failed</span> ${e.message}`);
+    } finally {
+      try{ $("fleetUpload").value = ""; }catch(_ ){}
+    }
+  }
+
+    function addFromShipCalc(targetKind, customerIdx) {
+    const res = computeShipCalc();
+    if(!res || res.cb_t===null || res.E<=0) {
+      alert("Cannot add: no valid consumption/energy or missing WtW.");
+      return;
+    }
+    if(res.missing.length) {
+      alert("Cannot add: missing WtW values in Fuel Library.");
+      return;
+    }
+
+    const name = ($("calcVesselName").value||"").trim() || "Unnamed";
+    const notes = ($("calcNotes").value||"").trim();
+
+    const v = blankVessel(name);
+    v.energyMJ = res.E;
+    v.ghgie = res.actual;
+    v.cb_calc = res.cb_t;
+    v.notes = notes;
+
+    if(targetKind==="owner") {
+      state.owner.fleet.push(v);
+      renderOwner();
+      setPage("owner");
+    } else {
+      const c = state.customers[customerIdx];
+      c.fleet.push(v);
+      setActiveCustomer(customerIdx);
+      renderCustomers();
+      setPage("customers");
+    }
+    renderOverview();
+    scheduleSave();
+  }
+
+  function wire() {
+    document.querySelectorAll(".tab").forEach(t=> t.addEventListener("click", ()=> setPage(t.dataset.page)));
+
+    $("btnPdfCurrent").addEventListener("click", exportPdfCurrent);
+    $("btnPdfAll").addEventListener("click", exportPdfAll);
+    $("btnExport").addEventListener("click", exportJSON);
+    $("btnImport").addEventListener("click", importJSON);
+    $("btnReset").addEventListener("click", resetSaved);
+
+    $("cbSource").addEventListener("change", ()=>{ renderOverview(); renderOwner(); renderCustomers(); scheduleSave(); });
+    $("globalAlloc").addEventListener("change", ()=>{ renderOverview(); scheduleSave(); });
+    $("globalCap").addEventListener("input", ()=>{ renderOverview(); scheduleSave(); });
+
+    $("btnDownloadTemplate").addEventListener("click", downloadTemplate);
+    $("btnImportFleet").addEventListener("click", handleImportFleet);
+
+    // Owner
+    $("ownerName").addEventListener("input", ()=>{ state.owner.name = $("ownerName").value; renderOwner(); renderOverview(); scheduleSave(); });
+    $("ownerPoolMode").addEventListener("change", ()=>{ state.owner.poolMode = $("ownerPoolMode").value; renderOwner(); renderOverview(); scheduleSave(); });
+    $("ownerCap").addEventListener("input", ()=>{ state.owner.cap = numOrNull($("ownerCap").value); renderOwner(); renderOverview(); scheduleSave(); });
+    $("embedModeOwner").addEventListener("change", ()=>{ state.owner.embedMode = $("embedModeOwner").value; scheduleSave(); });
+
+    $("btnOwnerClearFleet").addEventListener("click", ()=>{ state.owner.fleet=[]; renderOwner(); renderOverview(); scheduleSave(); });
+    $("btnOwnerClearAssets").addEventListener("click", ()=>{ state.owner.logoDataUrl=null; state.owner.documents=[]; renderOwner(); renderOverview(); scheduleSave(); });
+    $("btnOwnerAddVessel").addEventListener("click", ()=>{ state.owner.fleet.push(blankVessel()); renderOwner(); renderOverview(); scheduleSave(); });
+    $("btnOwnerAddFromCalc").addEventListener("click", ()=> addFromShipCalc("owner", 0));
+
+    $("ownerLogo").addEventListener("change", async ()=>{
+      const f = $("ownerLogo").files?.[0];
+      if(!f) return;
+      if($("embedModeOwner").value === "embed") {
+        state.owner.logoDataUrl = await fileToDataUrl(f);
+      } else {
+        alert("Meta-only: logo is not embedded. Switch Embed files = 'embed' for persistence after closing.");
+        state.owner.logoDataUrl = null;
+      }
+      $("ownerLogo").value="";
+      renderOwner(); renderOverview(); scheduleSave();
+    });
+
+    $("ownerDocs").addEventListener("change", async ()=>{
+      const files = Array.from($("ownerDocs").files||[]);
+      if(!files.length) return;
+      for(const f of files) {
+        const doc = {name:f.name, type:f.type||"application/octet-stream", size:f.size, dataUrl:null};
+        if($("embedModeOwner").value === "embed") {
+          try{ doc.dataUrl = await fileToDataUrl(f); }catch(e){ doc.dataUrl = null; }
+        }
+        state.owner.documents.push(doc);
+      }
+      $("ownerDocs").value="";
+      renderOwner(); renderOverview(); scheduleSave();
+    });
+
+    // Customers
+    $("customerSelect").addEventListener("change", ()=>{
+      setActiveCustomer(Number($("customerSelect").value));
+      renderCustomers();
+      renderOverview();
+      scheduleSave();
+    });
+    $("embedModeCustomer").addEventListener("change", ()=>{ state.customers[state.activeCustomer].embedMode = $("embedModeCustomer").value; scheduleSave(); });
+    $("customerPoolMode").addEventListener("change", ()=>{ state.customers[state.activeCustomer].poolMode = $("customerPoolMode").value; renderCustomers(); renderOverview(); scheduleSave(); });
+    $("customerCap").addEventListener("input", ()=>{ state.customers[state.activeCustomer].cap = numOrNull($("customerCap").value); renderCustomers(); renderOverview(); scheduleSave(); });
+
+    $("btnCustomerCreate").addEventListener("click", ()=>{
+      const name = ($("customerNew").value||"").trim();
+      if(!name) return alert("Please enter a customer name.");
+      const idx = state.customers.findIndex(c => (c.name||"").toLowerCase() === name.toLowerCase());
+      if(idx>=0) setActiveCustomer(idx);
+      else {
+        state.customers.push({name, logoDataUrl:null, documents:[], poolMode:"proportional", cap:null, fleet:[], embedMode:"meta"});
+        setActiveCustomer(state.customers.length-1);
+      }
+      $("customerNew").value="";
+      renderCustomers();
+      renderOverview();
+      scheduleSave();
+    });
+    $("btnCustomerDelete").addEventListener("click", ()=>{
+      if(state.customers.length<=1) return alert("At least 1 customer must exist.");
+      state.customers.splice(state.activeCustomer,1);
+      setActiveCustomer(Math.max(0, state.activeCustomer-1));
+      renderCustomers();
+      renderOverview();
+      scheduleSave();
+    });
+    $("btnCustomerClearFleet").addEventListener("click", ()=>{
+      state.customers[state.activeCustomer].fleet = [];
+      renderCustomers();
+      renderOverview();
+      scheduleSave();
+    });
+    $("btnCustomerClearAssets").addEventListener("click", ()=>{
+      const c = state.customers[state.activeCustomer];
+      c.logoDataUrl = null;
+      c.documents = [];
+      renderCustomers();
+      renderOverview();
+      scheduleSave();
+    });
+    $("btnCustomerAddVessel").addEventListener("click", ()=>{
+      state.customers[state.activeCustomer].fleet.push(blankVessel());
+      renderCustomers(); renderOverview(); scheduleSave();
+    });
+    $("btnCustomerAddFromCalc").addEventListener("click", ()=> addFromShipCalc("customer", state.activeCustomer));
+
+    $("customerLogo").addEventListener("change", async ()=>{
+      const c = state.customers[state.activeCustomer];
+      const f = $("customerLogo").files?.[0];
+      if(!f) return;
+      if($("embedModeCustomer").value === "embed") {
+        c.logoDataUrl = await fileToDataUrl(f);
+      } else {
+        alert("Meta-only: logo is not embedded. Switch Embed files = 'embed' for persistence after closing.");
+        c.logoDataUrl = null;
+      }
+      $("customerLogo").value="";
+      renderCustomers(); renderOverview(); scheduleSave();
+    });
+
+    $("customerDocs").addEventListener("change", async ()=>{
+      const c = state.customers[state.activeCustomer];
+      const files = Array.from($("customerDocs").files||[]);
+      if(!files.length) return;
+      for(const f of files) {
+        const doc = {name:f.name, type:f.type||"application/octet-stream", size:f.size, dataUrl:null};
+        if($("embedModeCustomer").value === "embed") {
+          try{ doc.dataUrl = await fileToDataUrl(f); }catch(e){ doc.dataUrl = null; }
+        }
+        c.documents.push(doc);
+      }
+      $("customerDocs").value="";
+      renderCustomers(); renderOverview(); scheduleSave();
+    });
+
+    // Ship calc
+    $("year").addEventListener("change", ()=>{ renderShipCalc(); scheduleSave(); });
+    $("refVal").addEventListener("input", ()=>{ renderShipCalc(); scheduleSave(); });
+    $("fWind").addEventListener("input", ()=>{ renderShipCalc(); scheduleSave(); });
+    $("calcVesselName").addEventListener("input", scheduleSave);
+    $("calcNotes").addEventListener("input", scheduleSave);
+
+    $("btnShipCalcAdd").addEventListener("click", ()=>{
+      const tgt = $("calcAddTarget").value;
+      const cidx = Number($("calcCustomerTarget").value || state.activeCustomer);
+      if(tgt==="owner") addFromShipCalc("owner", 0);
+      else addFromShipCalc("customer", cidx);
+    });
+
+    $("btnClearCons").addEventListener("click", ()=>{
+      state.consumption = [];
+      renderConsumption();
+      renderShipCalc();
+      scheduleSave();
+    });
+
+    // Consumption actions
+    $("btnAddRow").addEventListener("click", ()=>{
+      state.consumption.push({fuelIndex:0, amount:null, scope:1});
+      renderConsumption();
+      renderShipCalc();
+      scheduleSave();
+    });
+    $("btnExportCSV").addEventListener("click", exportCSV);
+
+    // Fuels
+    $("btnAddFuel").addEventListener("click", ()=>{
+      state.fuels.push({name:"New fuel", lcv:null, wtw:null, rwd:1, unit:"t"});
+      renderFuelLibrary();
+      renderConsumption();
+      renderShipCalc();
+      scheduleSave();
+    });
+    $("btnResetFuels").addEventListener("click", ()=>{
+      state.fuels = structuredClone(DEFAULT_FUELS);
+      state.consumption.forEach(r=>{ if(r.fuelIndex>=state.fuels.length) r.fuelIndex=0; });
+      renderFuelLibrary();
+      renderConsumption();
+      renderShipCalc();
+      scheduleSave();
+    });
+
+    // Modal
+    $("vesselModalClose").addEventListener("click", closeVesselDocsModal);
+    $("vesselModalBack").addEventListener("click", (e)=>{ if(e.target.id==="vesselModalBack") closeVesselDocsModal(); });
+
+    $("btnVesselDocsClear").addEventListener("click", ()=>{
+      if(vesselModalCtx.which===null) return;
+      const part = (vesselModalCtx.which==="owner") ? state.owner : state.customers[state.activeCustomer];
+      part.fleet[vesselModalCtx.index].documents = [];
+      renderVesselDocsList();
+      if(vesselModalCtx.which==="owner") renderOwner(); else renderCustomers();
+      renderOverview();
+      scheduleSave();
+    });
+
+    $("vesselDocsInput").addEventListener("change", async ()=>{
+      if(vesselModalCtx.which===null) return;
+      const part = (vesselModalCtx.which==="owner") ? state.owner : state.customers[state.activeCustomer];
+      const v = part.fleet[vesselModalCtx.index];
+      if(!Array.isArray(v.documents)) v.documents = [];
+
+      const files = Array.from($("vesselDocsInput").files||[]);
+      if(!files.length) return;
+
+      const embedMode = (vesselModalCtx.which==="owner") ? $("embedModeOwner").value : $("embedModeCustomer").value;
+
+      for(const f of files) {
+        const doc = {name:f.name, type:f.type||"application/octet-stream", size:f.size, dataUrl:null};
+        if(embedMode === "embed") {
+          try{ doc.dataUrl = await fileToDataUrl(f); }catch(e){ doc.dataUrl = null; }
+        }
+        v.documents.push(doc);
+      }
+      $("vesselDocsInput").value="";
+      renderVesselDocsList();
+      if(vesselModalCtx.which==="owner") renderOwner(); else renderCustomers();
+      renderOverview();
+      scheduleSave();
+    });
+
+    window.addEventListener("beforeunload", ()=>{ try{ saveState(); } catch(e){} });
+  }
+
+  function exportCSV() {
+    const vessel = ($("calcVesselName").value||"").trim();
+    const notes = ($("calcNotes").value||"").trim();
+    const year = $("year").value;
+
+    const lines = [];
+    lines.push(["Vessel","Notes","Year","Fuel","Amount","Unit","Scope","LCV_MJkg","WtW_gMJ","RWD","Energy_MJ","Emissions_tCO2e"].join(";"));
+
+    state.consumption.forEach(r=>{
+      const f = state.fuels[r.fuelIndex] || state.fuels[0];
+      const {energyMJ, emissionsT} = computeConsumptionRow(r);
+      lines.push([
+        vessel, notes, year,
+        f.name,
+        (r.amount ?? ""),
+        f.unit,
+        (r.scope ?? 1),
+        (f.lcv ?? ""),
+        (f.wtw ?? ""),
+        (f.rwd ?? 1),
+        (energyMJ ?? ""),
+        (emissionsT ?? "")
+      ].join(";"));
+    });
+
+    const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `FuelEU_WtW_${vessel||"vessel"}_${year}.csv`;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 500);
+  }
+
+  function renderAll() {
+    renderTabs();
+    renderCustomerSelects();
+    renderOwner();
+    renderCustomers();
+    renderFuelLibrary();
+    renderConsumption();
+    renderShipCalc();
+    renderOverview();
+  }
+
+  function init() {
+    fillDatalist("dlFlags", FLAG_OPTIONS);
+    fillDatalist("dlVerifiers", VERIFIER_OPTIONS);
+    fillDatalist("dlShipClass", SHIP_CLASS_OPTIONS);
+
+    renderYearOptions();
+    setActiveCustomer(0);
+
+    const loaded = loadState();
+    if(loaded?.state) {
+      Object.assign(state, loaded.state);
+
+      if(!Array.isArray(state.targets)) state.targets = structuredClone(DEFAULT_TARGETS);
+      if(!Array.isArray(state.fuels)) state.fuels = structuredClone(DEFAULT_FUELS);
+      if(!Array.isArray(state.consumption)) state.consumption = [];
+
+      if(!state.owner) state.owner = {name:"TT-Line", logoDataUrl:null, documents:[], poolMode:"proportional", cap:null, fleet:[], embedMode:"meta"};
+      if(!Array.isArray(state.customers) || state.customers.length===0) state.customers = [{name:"Customer 1", logoDataUrl:null, documents:[], poolMode:"proportional", cap:null, fleet:[], embedMode:"meta"}];
+
+      state.owner.fleet?.forEach(v=>{ if(v.shipClass===undefined) v.shipClass=""; if(!Array.isArray(v.documents)) v.documents=[]; });
+      state.customers.forEach(c=>{
+        c.fleet?.forEach(v=>{ if(v.shipClass===undefined) v.shipClass=""; if(!Array.isArray(v.documents)) v.documents=[]; });
+        if(!Array.isArray(c.documents)) c.documents=[];
+      });
+      if(!Array.isArray(state.owner.documents)) state.owner.documents=[];
+
+      if(loaded.ui) {
+        ui.page = loaded.ui.page || "overview";
+        setActiveCustomer(loaded.ui.activeCustomer ?? 0);
+        $("cbSource").value = loaded.ui.cbSource || "indicated_first";
+        $("globalAlloc").value = loaded.ui.globalAlloc || "proportional";
+        $("globalCap").value = loaded.ui.globalCap || "";
+      } else {
+        $("cbSource").value = "indicated_first";
+        $("globalAlloc").value = "proportional";
+        $("globalCap").value = "";
+      }
+
+      setSaveStatus("Loaded saved state");
+    } else {
+      $("cbSource").value = "indicated_first";
+      $("globalAlloc").value = "proportional";
+      $("globalCap").value = "";
+      setSaveStatus("Ready (no saved state yet)");
+    }
+
+    renderAll();
+    wire();
+    scheduleSave();
+  }
+
+  init();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+</body>
+</html>
