@@ -387,11 +387,6 @@ python3 -m http.server 8080 --bind 0.0.0.0
 > This tool is provided for **informational and planning purposes only**. Compliance determinations under Regulation (EU) 2023/1805 must be made by an **accredited verifier** in accordance with the Implementing Regulations issued by the European Commission. The penalty estimates are approximate and do not constitute legal or financial advice. Always refer to the official regulatory text and consult your verifier for binding compliance assessments.
 
 ---
-
-## About Normec Group
-
-**Normec** is a leading European provider of testing, inspection, certification and compliance services. Normec Verifavia is an EU-accredited verifier for FuelEU Maritime and EU MRV (Monitoring, Reporting and Verification) under Regulation (EU) 2015/757.
-
 🌐 [www.normecgroup.com](https://www.normecgroup.com)
 
 ---
