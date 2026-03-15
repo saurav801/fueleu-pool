@@ -1,5 +1,4 @@
 # ⚓ FuelEU WtW Compliance Pool Manager
-### Powered by Normec Group · Verification & Certification
 
 > A professional, browser-based compliance management tool for the **FuelEU Maritime Regulation (EU) 2023/1805** — covering Well-to-Wake (WtW) greenhouse gas intensity pooling, ship-level compliance balance calculation, and multi-party pool administration.
 
